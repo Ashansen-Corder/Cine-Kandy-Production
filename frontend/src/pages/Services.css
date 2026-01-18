@@ -1,0 +1,282 @@
+.services-page {
+  padding-top: 80px;
+  min-height: 100vh;
+  background: linear-gradient(180deg, var(--dark) 0%, var(--secondary) 100%);
+}
+
+.services-hero {
+  height: 50vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 50%, var(--accent) 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.services-hero::before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="2" fill="rgba(255,255,255,0.1)"/></svg>');
+  opacity: 0.3;
+}
+
+.services-hero-content {
+  position: relative;
+  z-index: 2;
+  padding: 0 2rem;
+}
+
+.services-hero-content h1 {
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 8vw, 5rem);
+  font-weight: 900;
+  color: var(--light);
+  margin-bottom: 1rem;
+}
+
+.services-hero-content p {
+  font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+  color: var(--secondary);
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 2.5rem;
+  margin-top: 3rem;
+}
+
+.service-card {
+  background: rgba(26, 26, 46, 0.6);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 2.5rem;
+  transition: var(--transition-smooth);
+  backdrop-filter: blur(10px);
+}
+
+.service-card:hover {
+  border-color: var(--primary);
+  background: rgba(26, 26, 46, 0.8);
+  box-shadow: 0 20px 60px rgba(201, 160, 80, 0.3);
+}
+
+.service-icon {
+  color: var(--primary);
+  margin-bottom: 1.5rem;
+  display: inline-block;
+  padding: 1.5rem;
+  background: rgba(201, 160, 80, 0.1);
+  border-radius: 50%;
+}
+
+.service-title {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--primary-light);
+  margin-bottom: 1rem;
+}
+
+.service-description {
+  color: var(--gray-light);
+  line-height: 1.8;
+  margin-bottom: 1.5rem;
+}
+
+.service-features {
+  list-style: none;
+  margin-bottom: 2rem;
+}
+
+.service-features li {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-bottom: 0.8rem;
+  color: var(--light);
+}
+
+.service-features svg {
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+.service-price {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 1.5rem;
+}
+
+.service-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 2rem;
+  background: linear-gradient(135deg, #dc3232 0%, #000000 100%);
+  border: 2px solid rgba(220,50,50,0.6);
+  color: var(--light);
+  font-family: var(--font-accent);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  text-decoration: none;
+  transition: var(--transition-smooth);
+}
+
+.service-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 18px 40px rgba(0,0,0,0.7);
+}
+
+.packages-section {
+  background: var(--secondary);
+  padding: var(--section-padding) 0;
+  margin-top: 4rem;
+}
+
+.packages-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2.5rem;
+  margin-top: 3rem;
+}
+
+.package-card {
+  background: rgba(15, 15, 30, 0.6);
+  border: 2px solid var(--border);
+  border-radius: 25px;
+  padding: 3rem 2rem;
+  text-align: center;
+  position: relative;
+  transition: var(--transition-smooth);
+  backdrop-filter: blur(10px);
+}
+
+.package-card.popular {
+  border-color: rgba(220,50,50,0.6);
+  background: linear-gradient(135deg, rgba(220,50,50,0.95) 0%, rgba(0,0,0,0.95) 100%);
+  transform: scale(1.05);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.03);
+}
+
+.popular-badge {
+  position: absolute;
+  top: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #dc3232 0%, #000000 100%);
+  color: var(--light);
+  padding: 0.5rem 1.5rem;
+  border-radius: 50px;
+  font-family: var(--font-accent);
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 1px;
+  box-shadow: 0 6px 20px rgba(220,50,50,0.25);
+}
+
+.package-name {
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--light);
+  margin-bottom: 1rem;
+}
+
+.package-price {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--light);
+  margin-bottom: 0.5rem;
+}
+
+.package-duration {
+  color: var(--gray-light);
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+  font-family: var(--font-accent);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+
+.package-features {
+  list-style: none;
+  margin-bottom: 2.5rem;
+  text-align: left;
+}
+
+.package-features li {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  color: var(--light);
+}
+
+.package-features svg {
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+.package-btn {
+  display: block;
+  padding: 1rem 2rem;
+  background: var(--primary);
+  color: var(--dark);
+  font-family: var(--font-accent);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  text-decoration: none;
+  border-radius: 50px;
+  transition: var(--transition-smooth);
+}
+
+.package-btn:hover {
+  background: var(--primary-light);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(201, 160, 80, 0.4);
+}
+
+.services-cta {
+  background: linear-gradient(135deg, var(--dark) 0%, var(--secondary) 100%);
+  padding: 5rem 2rem;
+  text-align: center;
+  margin-top: 4rem;
+}
+
+.services-cta h2 {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 800;
+  color: var(--primary);
+  margin-bottom: 1rem;
+}
+
+.services-cta p {
+  font-size: 1.3rem;
+  color: var(--gray-light);
+  margin-bottom: 2.5rem;
+}
+
+@media (max-width: 768px) {
+  .services-grid,
+  .packages-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .package-card.popular {
+    transform: scale(1);
+  }
+}
