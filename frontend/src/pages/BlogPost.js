@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import axios from 'axios';
+import { api } from '../apiClient';
 import './Blog.css';
 
 const BlogPost = () => {
@@ -8,7 +8,7 @@ const BlogPost = () => {
   const [post, setPost] = useState(null);
 
   useEffect(() => {
-    axios.get(`http://localhost:5000/api/blog/${id}`)
+    api.get(`/blog/${id}`)
       .then(res => setPost(res.data))
       .catch(err => console.error(err));
   }, [id]);

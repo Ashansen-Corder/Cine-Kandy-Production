@@ -1,46 +1,57 @@
-import React, { useEffect, useState } from 'react';
+
+import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Camera, Film, Award, Heart, Star, ArrowRight, Play } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import './Home.css';
+import studioImage from '../assets/studio-shoot.jpg';
+import professionalEquipmentImage from '../assets/professional-equipment.jpg';
+import experiencedTeamImage from '../assets/experienced-team.jpg';
+import artboard1Icon from '../assets/Artboard-1-alt@4x.png';
+import artboard2Icon from '../assets/Artboard-2@4x.png';
+import bgVideo from '../assets/HB.mp4';
+
 
 const Home = () => {
-  const [currentSlide, setCurrentSlide] = useState(0);
-
-  const heroImages = [
-    'https://images.unsplash.com/photo-1606216794074-735e91aa2c92?w=1920&q=80',
-    'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=1920&q=80',
-    'https://images.unsplash.com/photo-1519741497674-611481863552?w=1920&q=80'
-  ];
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % heroImages.length);
-    }, 5000);
-    return () => clearInterval(timer);
-  }, []);
+  // Removed unused scrollY state and effect
 
   const features = [
     {
-      icon: <Camera size={48} />,
+      icon: (
+        <img
+          src={artboard1Icon}
+          alt="Photography"
+          className="feature-icon-image"
+          loading="lazy"
+        />
+      ),
       title: 'Photography',
       description: 'Capturing timeless moments with artistic vision and technical excellence'
     },
     {
-      icon: <Film size={48} />,
+      icon: (
+        <img
+          src={artboard1Icon}
+          alt="Videography"
+          className="feature-icon-image"
+          loading="lazy"
+        />
+      ),
       title: 'Videography',
       description: 'Creating cinematic stories that move hearts and inspire minds'
     },
     {
-      icon: <Award size={48} />,
-      title: 'Award Winning',
-      description: 'Recognized excellence in visual storytelling across Sri Lanka'
+      icon: (
+        <img
+          src={artboard2Icon}
+          alt="Dronography"
+          className="feature-icon-image"
+          loading="lazy"
+        />
+      ),
+      title: 'Dronography',
+      description: 'Aerial coverage with licensed pilots delivering sweeping cinematic perspectives'
     },
-    {
-      icon: <Heart size={48} />,
-      title: 'Passion Driven',
-      description: 'Every project is crafted with dedication and creative passion'
-    }
   ];
 
   const stats = [
@@ -50,159 +61,228 @@ const Home = () => {
     { number: '100%', label: 'Client Satisfaction' }
   ];
 
-  const recentWork = [
+
+  const services = [
     {
       id: 1,
-      image: 'https://images.unsplash.com/photo-1519741497674-611481863552?w=800&q=80',
-      title: 'Royal Wedding',
-      category: 'Wedding'
+      title: 'Photography Services',
+      subtitle: 'Professional Photo Sessions',
+      description: 'Capturing timeless moments with artistic vision and technical excellence. From weddings to corporate events, we deliver stunning visual narratives.',
+      icon: (
+        <img
+          src="/service-camera.svg"
+          alt="Photography Services"
+          className="service-icon-image"
+          loading="lazy"
+        />
+      )
     },
     {
       id: 2,
-      image: 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=800&q=80',
-      title: 'Corporate Gala',
-      category: 'Corporate'
+      title: 'Videography Services',
+      subtitle: 'Cinematic Video Production',
+      description: 'Creating compelling video content that tells your story. Our team produces high-quality videos for events, commercials, and corporate communications.',
+      icon: (
+        <img
+          src="/service-film.svg"
+          alt="Videography Services"
+          className="service-icon-image"
+          loading="lazy"
+        />
+      )
     },
     {
       id: 3,
-      image: 'https://images.unsplash.com/photo-1606216794074-735e91aa2c92?w=800&q=80',
-      title: 'Cultural Festival',
-      category: 'Event'
+      title: 'Post Production',
+      subtitle: 'Editing & Color Grading',
+      description: 'Professional editing, color grading, and post-production services. We transform raw footage into polished, engaging final products.',
+      icon: (
+        <img
+          src="/service-post.svg"
+          alt="Post Production"
+          className="service-icon-image"
+          loading="lazy"
+        />
+      )
     },
     {
       id: 4,
-      image: 'https://images.unsplash.com/photo-1464047736614-af63643285bf?w=800&q=80',
-      title: 'Pre-Wedding Shoot',
-      category: 'Pre-Wedding'
+      title: 'Dronography',
+      subtitle: 'Aerial Drone Filming',
+      description: 'Licensed pilots capturing sweeping aerial views, cinematic fly-throughs, and dynamic overhead shots for weddings, events, and commercials.',
+      icon: (
+        <img
+          src={artboard2Icon}
+          alt="Dronography"
+          className="service-icon-image"
+          loading="lazy"
+        />
+      )
     }
   ];
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2
-      }
+  const facilities = [
+    {
+      title: 'State-of-the-art Studio',
+      description: 'Professional in-house studio equipped with the latest lighting and backdrop systems for controlled environment shoots.',
+      image: studioImage
+    },
+    {
+      title: 'Professional Equipment',
+      description: 'We use industry-leading cameras, lenses, and lighting equipment to ensure the highest quality results for every project.',
+      image: professionalEquipmentImage
+    },
+    {
+      title: 'Experienced Team',
+      description: 'Our team of dedicated professionals brings years of experience in photography, videography, and post-production.',
+      image: experiencedTeamImage
     }
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 50 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.6,
-        ease: 'easeOut'
-      }
-    }
-  };
+  ];
 
   return (
     <div className="home">
       {/* Hero Section */}
-      <section className="hero">
-        <div className="hero-slider">
-          {heroImages.map((image, index) => (
-            <motion.div
-              key={index}
-              className={`hero-slide ${index === currentSlide ? 'active' : ''}`}
-              style={{ backgroundImage: `url(${image})` }}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: index === currentSlide ? 1 : 0 }}
-              transition={{ duration: 1.5 }}
-            />
-          ))}
-          <div className="hero-overlay" />
-        </div>
-
+      <section className="hero hero-padded">
+        <video autoPlay loop muted playsInline className="hero-background-video">
+          <source src={bgVideo} type="video/mp4" />
+        </video>
+        <div className="hero-overlay"></div>
         <div className="hero-content">
-          <motion.div
-            initial={{ opacity: 0, y: 100 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, delay: 0.3 }}
-            className="hero-text"
-          >
-            <motion.h1 
-              className="hero-title"
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 1, delay: 0.5 }}
-            >
-              Capturing Your
-              <span className="gradient-text"> Precious Moments</span>
-            </motion.h1>
-            <motion.p 
-              className="hero-subtitle"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 1, delay: 0.8 }}
-            >
-              Professional Photography & Videography Services in Kandy, Sri Lanka
-            </motion.p>
-            <motion.div 
-              className="hero-buttons"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 1, delay: 1.1 }}
-            >
-              <Link to="/gallery" className="btn btn-primary">
-                View Gallery <ArrowRight size={20} />
-              </Link>
-              <Link to="/contact" className="btn">
-                Book Now
-              </Link>
-            </motion.div>
-          </motion.div>
-        </div>
-
-        <div className="slider-dots">
-          {heroImages.map((_, index) => (
-            <button
-              key={index}
-              className={`dot ${index === currentSlide ? 'active' : ''}`}
-              onClick={() => setCurrentSlide(index)}
-              aria-label={`Go to slide ${index + 1}`}
-            />
-          ))}
+          <h1 className="hero-title hero-title-spaced">
+            <span className="bw-gradient-text">Capturing Moments</span><br /><br />  
+            <span className="gradient-text"> Creating Legacies </span><br /><br />  
+          </h1>
+          <p className="hero-subtitle">
+            Expert film production for brands, events, and cinematic journeys
+          </p>
         </div>
       </section>
 
       {/* Features Section */}
-      <section className="section features-section">
+      <section 
+        className="section features-section"
+        style={{
+          minHeight: '100vh',
+          paddingTop: '200px',
+          paddingBottom: '200px',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          boxSizing: 'border-box'
+        }}
+      >
         <div className="container">
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.3 }}
-          >
-            <motion.h2 className="section-title" variants={itemVariants}>
-              Why Choose Us
-            </motion.h2>
-            <motion.p className="section-subtitle" variants={itemVariants}>
-              We bring stories to life through our lens
-            </motion.p>
+          <div data-scroll="blur-up" data-scroll-duration="slow">
+            <h2 className="section-title">Why Choose Us</h2>
+            <p className="section-subtitle">We bring stories to life through our lens</p>
+          </div>
 
-            <div className="features-grid">
-              {features.map((feature, index) => (
+          <div className="features-grid">
+            {features.map((feature, index) => (
+              <div
+                key={index}
+                data-scroll="fade-up"
+                data-scroll-delay={index * 150}
+                data-scroll-easing="ease-out"
+              >
                 <motion.div
-                  key={index}
                   className="feature-card"
-                  variants={itemVariants}
                   whileHover={{ 
-                    y: -10,
-                    boxShadow: '0 20px 60px rgba(201, 160, 80, 0.3)'
+                    y: -12,
+                    boxShadow: '0 20px 40px rgba(0, 0, 0, 0.2)'
                   }}
+                  transition={{ type: 'spring', stiffness: 300, damping: 30 }}
                 >
                   <div className="feature-icon">{feature.icon}</div>
                   <h3 className="feature-title">{feature.title}</h3>
                   <p className="feature-description">{feature.description}</p>
                 </motion.div>
-              ))}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Facilities Section */}
+      <section 
+        className="section facilities-section"
+        style={{
+          minHeight: '100vh',
+          paddingTop: '180px',
+          paddingBottom: '180px',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          boxSizing: 'border-box'
+        }}
+      >
+        <div className="container">
+          <div data-scroll="blur-up" data-scroll-duration="slow">
+            <h2 className="section-title">Our Facilities</h2>
+            <p className="section-subtitle">Top-tier equipment and professional studio space</p>
+          </div>
+
+          <div className="facilities-grid">
+            {facilities.map((facility, index) => (
+              <div
+                key={index}
+                data-scroll="rotate-up"
+                data-scroll-delay={index * 200}
+              >
+                <div className="facility-card">
+                  <div className="facility-image-container">
+                    {facility.image && (
+                      <img 
+                        src={facility.image} 
+                        alt={facility.title} 
+                        className="facility-img-tag" 
+                      />
+                    )}
+                  </div>
+                  <h3 className="facility-title">{facility.title}</h3>
+                  <p className="facility-description">{facility.description}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Experienced Team Section */}
+      <section 
+        className="section studio-section"
+        style={{
+          minHeight: '100vh',
+          paddingTop: '180px',
+          paddingBottom: '180px',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          boxSizing: 'border-box'
+        }}
+      >
+        <div className="container">
+          <div className="studio-content">
+            <div data-scroll="blur-up" data-scroll-duration="slow" className="studio-text">
+              <h2 className="section-title">Experienced Team</h2>
+              <p className="section-subtitle">Dedicated professionals with years of expertise</p>
+              <p className="studio-description">
+                Our team brings together talented photographers, videographers, and post-production specialists with extensive experience across weddings, corporate events, and creative projects. We're passionate about delivering excellence in every frame.
+              </p>
             </div>
-          </motion.div>
+            <div data-scroll="fade-up" className="studio-image-wrapper">
+              <motion.img 
+                src={experiencedTeamImage}
+                alt="Experienced Team"
+                className="studio-image"
+                whileHover={{ scale: 1.02 }}
+                transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+              />
+            </div>
+          </div>
         </div>
       </section>
 
@@ -211,90 +291,31 @@ const Home = () => {
         <div className="container">
           <div className="stats-grid">
             {stats.map((stat, index) => (
-              <motion.div
+              <div
                 key={index}
+                data-scroll="fade-up"
+                data-scroll-delay={index * 150}
                 className="stat-item"
-                initial={{ opacity: 0, scale: 0.5 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
               >
                 <h3 className="stat-number">{stat.number}</h3>
                 <p className="stat-label">{stat.label}</p>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Recent Work Section */}
-      <section className="section recent-work-section">
-        <div className="container">
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-          >
-            <h2 className="section-title">Recent Work</h2>
-            <p className="section-subtitle">
-              Explore our latest photography and videography projects
-            </p>
 
-            <div className="work-grid">
-              {recentWork.map((work, index) => (
-                <motion.div
-                  key={work.id}
-                  className="work-card"
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6, delay: index * 0.1 }}
-                  whileHover={{ scale: 1.05 }}
-                >
-                  <div className="work-image" style={{ backgroundImage: `url(${work.image})` }}>
-                    <div className="work-overlay">
-                      <span className="work-category">{work.category}</span>
-                      <Play className="play-icon" size={48} />
-                    </div>
-                  </div>
-                  <div className="work-info">
-                    <h3>{work.title}</h3>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-
-            <motion.div 
-              className="work-cta"
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: 0.4 }}
-            >
-              <Link to="/gallery" className="btn btn-primary">
-                View Full Gallery <ArrowRight size={20} />
-              </Link>
-            </motion.div>
-          </motion.div>
-        </div>
-      </section>
 
       {/* CTA Section */}
       <section className="cta-section">
-        <motion.div 
-          className="cta-content"
-          initial={{ opacity: 0, scale: 0.9 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-        >
+        <div data-scroll="blur-up" data-scroll-duration="slow" className="cta-content">
           <h2>Ready to Create Something Amazing?</h2>
           <p>Let's capture your special moments together</p>
           <Link to="/contact" className="btn btn-primary">
             Get In Touch <ArrowRight size={20} />
           </Link>
-        </motion.div>
+        </div>
       </section>
     </div>
   );

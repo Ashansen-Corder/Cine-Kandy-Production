@@ -14,6 +14,13 @@ npm install
 npm start
 ```
 
+Set API base URL (optional, defaults to http://localhost:5000/api):
+
+```bash
+cp .env.example .env
+# update REACT_APP_API_BASE if your backend URL differs
+```
+
 ## Build for Production
 
 ```bash

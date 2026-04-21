@@ -1,35 +1,96 @@
-# Dependencies
+# ========================================
+# MERN Stack - Production Ready .gitignore
+# ========================================
+
+# ========== NODE.JS DEPENDENCIES ==========
 node_modules/
-/.pnp
-.pnp.js
-
-# Testing
-/coverage
-
-# Production
-/build
-/dist
-
-# Misc
-.DS_Store
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
+package-lock.json
+yarn.lock
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+lerna-debug.log*
 
-# IDE
+# ========== ENVIRONMENT VARIABLES ==========
+.env
+.env.local
+.env.*.local
+.env.development
+.env.development.local
+.env.test
+.env.test.local
+.env.production
+.env.production.local
+
+# ========== IDE & EDITOR ==========
 .vscode/
 .idea/
 *.swp
 *.swo
-
-# OS
+*~
+.project
+.classpath
+.c9/
+*.sublime-project
+*.sublime-workspace
+.DS_Store
 Thumbs.db
 
-# Uploads (backend)
+# ========== BUILD OUTPUTS ==========
+# Frontend
+frontend/build/
+frontend/dist/
+frontend/.next/
+frontend/out/
+frontend/.cache/
+
+# Backend
+backend/dist/
+backend/build/
+
+# General
+dist/
+build/
+
+# ========== TESTING & COVERAGE ==========
+/coverage
+.nyc_output/
+*.lcov
+.testing/
+
+# ========== DATABASE & STORAGE ==========
+*.db
+*.sqlite
+*.sqlite3
+mongodb/
+data/
 backend/uploads/
+uploads/
+temp/
+tmp/
+
+# ========== LOGS ==========
+logs/
+*.log
+
+# ========== CACHE ==========
+.eslintcache
+.prettierignore
+.cache/
+
+# ========== OS FILES ==========
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+
+# ========== MISC ==========
+.tern-port
+.pnp
+.pnp.js
+.nuxt
+.next/
+.serverless/
+.fusebox/
+.dynamodb/
+.vercel

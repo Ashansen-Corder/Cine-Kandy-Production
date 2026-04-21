@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Lock, User } from 'lucide-react';
-import axios from 'axios';
+import { api } from '../../apiClient';
 import './Admin.css';
 
 const AdminLogin = () => {
@@ -12,12 +12,31 @@ const AdminLogin = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setError('');
     try {
-      const response = await axios.post('http://localhost:5000/api/admin/login', credentials);
-      localStorage.setItem('adminToken', response.data.token);
-      navigate('/admin/dashboard');
+      if (!credentials.username || !credentials.password) {
+        setError('Please enter username and password');
+        return;
+      }
+      const response = await api.post('/admin/login', credentials);
+      if (response.data.success && response.data.token) {
+        localStorage.setItem('adminToken', response.data.token);
+        navigate('/admin/dashboard');
+      } else {
+        setError(response.data.error || 'Login failed');
+      }
     } catch (err) {
-      setError('Invalid credentials');
+      const errorMsg = err.response?.data?.error || err.message;
+      console.error('Login error:', err);
+      
+      // More specific error messages
+      if (err.code === 'ECONNREFUSED' || err.message === 'Network Error' || !err.response) {
+        setError('Cannot connect to server. Is the backend running on port 5000?');
+      } else if (err.response?.status === 400) {
+        setError(err.response.data.error || 'Invalid request');
+      } else {
+        setError(errorMsg || 'Invalid credentials. Try username: admin, password: admin123');
+      }
     }
   };
 

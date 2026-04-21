@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import logoVideo from '../assets/Logo Animation.mp4';
 import './Preloader.css';
-import logoVideo from '../assets/Ashan/Logo Animation.mp4';
 
 const Preloader = ({ theme }) => {
   const [isLoading, setIsLoading] = useState(true);

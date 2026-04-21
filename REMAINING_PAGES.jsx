@@ -40,12 +40,12 @@ const Contact = () => {
             <div className="contact-info-card">
               <Phone className="info-icon" />
               <h3>Phone</h3>
-              <p>+94 77 123 4567</p>
+              <p>0752026577</p>
             </div>
             <div className="contact-info-card">
               <Mail className="info-icon" />
               <h3>Email</h3>
-              <p>info@cinekandyfilms.com</p>
+              <p>kaizersen570@gmail.com</p>
             </div>
             <div className="contact-info-card">
               <MapPin className="info-icon" />

@@ -1,37 +1,42 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { Image, FileText, Mail, LogOut, Plus, Trash2, Edit } from 'lucide-react';
-import axios from 'axios';
+import { Image, FileText, Mail, LogOut, Plus, Trash2, Edit, LayoutDashboard, Settings, Film, Play } from 'lucide-react';
+import { authApi } from '../../apiClient';
 import './Admin.css';
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('stats');
   const [stats, setStats] = useState({});
-  const [gallery, setGallery] = useState([]);
+  const [galleryItems, setGalleryItems] = useState([]);
   const [blogs, setBlogs] = useState([]);
   const [contacts, setContacts] = useState([]);
-  const navigate = useNavigate();
-
-  const api = axios.create({
-    baseURL: 'http://localhost:5000/api',
-    headers: {
-      'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
-    }
+  const [showModal, setShowModal] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [modalType, setModalType] = useState('image'); // 'image' or 'video'
+  
+  const [galleryForm, setGalleryForm] = useState({
+    title: '',
+    description: '',
+    category: 'Weddings',
+    type: 'Image',
+    image: '',
+    vimeoUrl: ''
   });
+  
+  const navigate = useNavigate();
+  const api = authApi(localStorage.getItem('adminToken'));
 
-  useEffect(() => {
-    loadData();
-  }, [activeTab]);
-
-  const loadData = async () => {
+  // Load all data
+  const loadData = useCallback(async () => {
     try {
+      // Load stats
       const statsRes = await api.get('/admin/stats');
-      setStats(statsRes.data);
+      setStats(statsRes.data.data || statsRes.data);
 
+      // Load appropriate tab data
       if (activeTab === 'gallery') {
         const galleryRes = await api.get('/gallery');
-        setGallery(galleryRes.data);
+        setGalleryItems(galleryRes.data.data || galleryRes.data);
       } else if (activeTab === 'blogs') {
         const blogsRes = await api.get('/blog');
         setBlogs(blogsRes.data);
@@ -41,10 +46,17 @@ const AdminDashboard = () => {
       }
     } catch (error) {
       if (error.response?.status === 401) {
+        console.warn('Auth failed, logging out...');
+        localStorage.removeItem('adminToken');
         navigate('/admin');
       }
+      console.error('Error loading data:', error.response?.data || error.message);
     }
-  };
+  }, [activeTab, api, navigate]);
+
+  useEffect(() => {
+    loadData();
+  }, [activeTab, loadData]);
 
   const handleLogout = () => {
     localStorage.removeItem('adminToken');
@@ -62,61 +74,158 @@ const AdminDashboard = () => {
     }
   };
 
+  // Handle form submission for gallery items (both image and video)
+  const handleGallerySubmit = async (e) => {
+    e.preventDefault();
+
+    if (!galleryForm.title || !galleryForm.category) {
+      alert('Please fill in title and category');
+      return;
+    }
+
+    // Validate type-specific fields
+    if (modalType === 'image' && !galleryForm.image) {
+      alert('Please provide an image URL');
+      return;
+    }
+
+    if (modalType === 'video' && !galleryForm.vimeoUrl) {
+      alert('Please provide a Vimeo URL');
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+      const payload = {
+        title: galleryForm.title,
+        description: galleryForm.description,
+        category: galleryForm.category,
+        type: modalType === 'image' ? 'Image' : 'Video',
+        featured: false
+      };
+
+      if (modalType === 'image') {
+        payload.image = galleryForm.image;
+      } else {
+        payload.vimeoUrl = galleryForm.vimeoUrl;
+      }
+
+      await api.post('/gallery', payload);
+      alert(`${modalType === 'image' ? 'Image' : 'Video'} added successfully!`);
+      
+      setGalleryForm({
+        title: '',
+        description: '',
+        category: 'Weddings',
+        type: 'Image',
+        image: '',
+        vimeoUrl: ''
+      });
+      setShowModal(false);
+      loadData();
+    } catch (error) {
+      alert('Error: ' + (error.response?.data?.error || error.message));
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
-    <div className="admin-dashboard">
-      <div className="admin-sidebar">
-        <h2>Cine Kandy Admin</h2>
-        <nav>
+    <div className="admin-dashboard-premium">
+      <div className="admin-sidebar-premium">
+        <div className="sidebar-header">
+          <h2>CINE KANDY</h2>
+          <p>Admin Control</p>
+        </div>
+        
+        <nav className="sidebar-nav">
           <button 
             onClick={() => setActiveTab('stats')} 
-            className={activeTab === 'stats' ? 'active' : ''}
+            className={`nav-btn ${activeTab === 'stats' ? 'active' : ''}`}
           >
-            Dashboard
+            <LayoutDashboard size={22} />
+            <span>Dashboard</span>
           </button>
           <button 
             onClick={() => setActiveTab('gallery')} 
-            className={activeTab === 'gallery' ? 'active' : ''}
+            className={`nav-btn ${activeTab === 'gallery' ? 'active' : ''}`}
           >
-            <Image size={20} /> Gallery
+            <Image size={22} />
+            <span>Gallery</span>
           </button>
           <button 
             onClick={() => setActiveTab('blogs')} 
-            className={activeTab === 'blogs' ? 'active' : ''}
+            className={`nav-btn ${activeTab === 'blogs' ? 'active' : ''}`}
           >
-            <FileText size={20} /> Blog Posts
+            <FileText size={22} />
+            <span>Blog Posts</span>
           </button>
           <button 
             onClick={() => setActiveTab('contacts')} 
-            className={activeTab === 'contacts' ? 'active' : ''}
+            className={`nav-btn ${activeTab === 'contacts' ? 'active' : ''}`}
           >
-            <Mail size={20} /> Contacts
+            <Mail size={22} />
+            <span>Inquiries</span>
           </button>
-          <button onClick={handleLogout} className="logout-btn">
-            <LogOut size={20} /> Logout
+          <button className="nav-btn">
+            <Settings size={22} />
+            <span>Settings</span>
           </button>
         </nav>
+
+        <button onClick={handleLogout} className="logout-btn-premium">
+          <LogOut size={20} />
+          <span>Logout</span>
+        </button>
       </div>
 
-      <div className="admin-content">
+      <div className="admin-content-premium">
         {activeTab === 'stats' && (
-          <div className="stats-dashboard">
-            <h1>Dashboard Overview</h1>
-            <div className="stats-cards">
-              <div className="stat-card">
-                <h3>{stats.gallery || 0}</h3>
-                <p>Gallery Items</p>
+          <div className="dashboard-premium">
+            <div className="dashboard-header">
+              <h1>Dashboard Overview</h1>
+              <p>Welcome back to your admin control center</p>
+            </div>
+
+            <div className="stats-grid-premium">
+              <div className="glass-card stat-card-premium">
+                <div className="stat-icon projects">📊</div>
+                <div className="stat-content">
+                  <h3>{stats.gallery || 0}</h3>
+                  <p>Total Projects</p>
+                </div>
               </div>
-              <div className="stat-card">
-                <h3>{stats.blogs || 0}</h3>
-                <p>Blog Posts</p>
+
+              <div className="glass-card stat-card-premium">
+                <div className="stat-icon videos">🎬</div>
+                <div className="stat-content">
+                  <h3>{stats.videos || 0}</h3>
+                  <p>Total Videos</p>
+                </div>
               </div>
-              <div className="stat-card">
-                <h3>{stats.newContacts || 0}</h3>
-                <p>New Contacts</p>
+
+              <div className="glass-card stat-card-premium">
+                <div className="stat-icon inquiries">📧</div>
+                <div className="stat-content">
+                  <h3>{stats.newContacts || 0}</h3>
+                  <p>New Inquiries</p>
+                </div>
               </div>
-              <div className="stat-card">
-                <h3>{stats.totalContacts || 0}</h3>
-                <p>Total Contacts</p>
+
+              <div className="glass-card stat-card-premium">
+                <div className="stat-icon views">👁️</div>
+                <div className="stat-content">
+                  <h3>{stats.blogs || 0}</h3>
+                  <p>Total Views</p>
+                </div>
+              </div>
+
+              <div className="glass-card stat-card-premium">
+                <div className="stat-icon contacts">📞</div>
+                <div className="stat-content">
+                  <h3>{stats.totalContacts || 0}</h3>
+                  <p>Total Contacts</p>
+                </div>
               </div>
             </div>
           </div>
@@ -124,75 +233,250 @@ const AdminDashboard = () => {
 
         {activeTab === 'gallery' && (
           <div>
-            <div className="admin-header">
+            <div className="dashboard-header">
               <h1>Gallery Management</h1>
-              <button className="btn btn-primary"><Plus size={20} /> Add Item</button>
+              <p>Upload and manage your portfolio (images and videos)</p>
             </div>
-            <div className="admin-grid">
-              {gallery.map(item => (
-                <div key={item._id} className="admin-card">
-                  <img src={item.image} alt={item.title} />
-                  <div className="admin-card-content">
-                    <h3>{item.title}</h3>
-                    <p>{item.category}</p>
-                  </div>
-                  <div className="card-actions">
-                    <button className="edit-btn"><Edit size={18} /></button>
-                    <button className="delete-btn" onClick={() => deleteItem('gallery', item._id)}>
-                      <Trash2 size={18} />
+
+            {/* ===== MODAL FOR ADD GALLERY ITEM ===== */}
+            {showModal && (
+              <div className="modal-overlay-gallery" onClick={() => setShowModal(false)}>
+                <div className="modal-content-gallery" onClick={(e) => e.stopPropagation()}>
+                  <div className="modal-header-gallery">
+                    <h2>Add New {modalType === 'video' ? 'Video' : 'Image'}</h2>
+                    <button 
+                      className="modal-close-btn"
+                      onClick={() => setShowModal(false)}
+                    >
+                      ✕
                     </button>
                   </div>
+
+                  <form className="gallery-form" onSubmit={handleGallerySubmit}>
+                    <div className="form-group-gallery">
+                      <label htmlFor="title">Title *</label>
+                      <input
+                        id="title"
+                        type="text"
+                        placeholder="Enter project title"
+                        value={galleryForm.title}
+                        onChange={(e) => setGalleryForm({...galleryForm, title: e.target.value})}
+                        required
+                      />
+                    </div>
+
+                    <div className="form-group-gallery">
+                      <label htmlFor="description">Description</label>
+                      <textarea
+                        id="description"
+                        placeholder="Project description..."
+                        value={galleryForm.description}
+                        onChange={(e) => setGalleryForm({...galleryForm, description: e.target.value})}
+                        rows="3"
+                      />
+                    </div>
+
+                    <div className="form-group-gallery">
+                      <label htmlFor="category">Category *</label>
+                      <select
+                        id="category"
+                        value={galleryForm.category}
+                        onChange={(e) => setGalleryForm({...galleryForm, category: e.target.value})}
+                        required
+                      >
+                        <option value="Weddings">Weddings</option>
+                        <option value="Corporate">Corporate</option>
+                        <option value="Events">Events</option>
+                      </select>
+                    </div>
+
+                    {modalType === 'image' ? (
+                      <div className="form-group-gallery">
+                        <label htmlFor="imageUrl">Image URL *</label>
+                        <input
+                          id="imageUrl"
+                          type="url"
+                          placeholder="https://example.com/image.jpg"
+                          value={galleryForm.image}
+                          onChange={(e) => setGalleryForm({...galleryForm, image: e.target.value})}
+                          required
+                        />
+                      </div>
+                    ) : (
+                      <div className="form-group-gallery">
+                        <label htmlFor="vimeoUrl">Vimeo URL *</label>
+                        <input
+                          id="vimeoUrl"
+                          type="url"
+                          placeholder="https://vimeo.com/123456789"
+                          value={galleryForm.vimeoUrl}
+                          onChange={(e) => setGalleryForm({...galleryForm, vimeoUrl: e.target.value})}
+                          required
+                        />
+                      </div>
+                    )}
+
+                    <div className="modal-actions-gallery">
+                      <button 
+                        type="submit"
+                        className="btn btn-primary"
+                        disabled={isSubmitting}
+                      >
+                        {isSubmitting ? 'Saving...' : 'Save Item'}
+                      </button>
+                      <button 
+                        type="button"
+                        className="btn btn-secondary"
+                        onClick={() => setShowModal(false)}
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </form>
                 </div>
-              ))}
-            </div>
+              </div>
+            )}
+            {/* ===== END MODAL ===== */}
+            
+            {galleryItems.length === 0 ? (
+              <div className="glass-card" style={{ padding: '3rem', textAlign: 'center', marginTop: '2rem' }}>
+                <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '1rem' }}>No gallery items yet. Start by adding your first project.</p>
+                <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', marginTop: '1rem', flexWrap: 'wrap' }}>
+                  <button 
+                    className="btn btn-primary"
+                    onClick={() => {
+                      setModalType('image');
+                      setShowModal(true);
+                    }}
+                  >
+                    <Plus size={20} /> Add Image
+                  </button>
+                  <button 
+                    className="btn btn-primary"
+                    onClick={() => {
+                      setModalType('video');
+                      setShowModal(true);
+                    }}
+                  >
+                    <Film size={20} /> Add Video
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <>
+                <div style={{ marginBottom: '2rem', textAlign: 'right', display: 'flex', gap: '1rem', justifyContent: 'flex-end', flexWrap: 'wrap' }}>
+                  <button 
+                    className="btn btn-primary"
+                    onClick={() => {
+                      setModalType('image');
+                      setShowModal(true);
+                    }}
+                  >
+                    <Plus size={20} /> Add Image
+                  </button>
+                  <button 
+                    className="btn btn-primary"
+                    onClick={() => {
+                      setModalType('video');
+                      setShowModal(true);
+                    }}
+                  >
+                    <Film size={20} /> Add Video
+                  </button>
+                </div>
+
+                {/* Unified Gallery Grid - Both Images and Videos */}
+                <div className="admin-grid">
+                  {galleryItems.map(item => (
+                    <div key={item._id} className="admin-card">
+                      {item.type === 'Image' ? (
+                        <img src={item.image} alt={item.title} style={{ width: '100%', height: '200px', objectFit: 'cover' }} />
+                      ) : (
+                        <div className="video-thumbnail-preview" style={{ width: '100%', height: '200px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          <Play size={32} />
+                        </div>
+                      )}
+                      <div className="admin-card-content">
+                        <h3>{item.title}</h3>
+                        <p>{item.category}</p>
+                        <small style={{ color: '#C9A050' }}>{item.type}</small>
+                      </div>
+                      <div className="card-actions">
+                        <button className="edit-btn"><Edit size={18} /></button>
+                        <button className="delete-btn" onClick={() => deleteItem('gallery', item._id)}>
+                          <Trash2 size={18} />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
           </div>
         )}
 
         {activeTab === 'blogs' && (
           <div>
-            <div className="admin-header">
+            <div className="dashboard-header">
               <h1>Blog Posts</h1>
-              <button className="btn btn-primary"><Plus size={20} /> New Post</button>
+              <p>Create and manage your blog content</p>
             </div>
-            <div className="blog-list">
-              {blogs.map(post => (
-                <div key={post._id} className="blog-item">
-                  <h3>{post.title}</h3>
-                  <p>{post.excerpt}</p>
-                  <span className="blog-date">{new Date(post.createdAt).toLocaleDateString()}</span>
-                  <div className="card-actions">
-                    <button className="edit-btn"><Edit size={18} /></button>
-                    <button className="delete-btn" onClick={() => deleteItem('blog', post._id)}>
-                      <Trash2 size={18} />
-                    </button>
+            {blogs.length === 0 ? (
+              <div className="glass-card" style={{ padding: '3rem', textAlign: 'center', marginTop: '2rem' }}>
+                <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '1rem' }}>No blog posts yet. Start creating engaging content.</p>
+                <button className="btn btn-primary" style={{ marginTop: '1rem' }}><Plus size={20} /> Create New Post</button>
+              </div>
+            ) : (
+              <div className="blog-list">
+                {blogs.map(post => (
+                  <div key={post._id} className="blog-item">
+                    <h3>{post.title}</h3>
+                    <p>{post.excerpt}</p>
+                    <span className="blog-date">{new Date(post.createdAt).toLocaleDateString()}</span>
+                    <div className="card-actions">
+                      <button className="edit-btn"><Edit size={18} /></button>
+                      <button className="delete-btn" onClick={() => deleteItem('blog', post._id)}>
+                        <Trash2 size={18} />
+                      </button>
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
 
         {activeTab === 'contacts' && (
           <div>
-            <h1>Contact Messages</h1>
-            <div className="contacts-list">
-              {contacts.map(contact => (
-                <div key={contact._id} className="contact-item">
-                  <h3>{contact.name}</h3>
-                  <p><strong>Email:</strong> {contact.email} | <strong>Phone:</strong> {contact.phone}</p>
-                  <p className="contact-message">{contact.message}</p>
-                  <span className={`status ${contact.status}`}>{contact.status}</span>
-                  <button className="delete-btn" onClick={() => deleteItem('contact', contact._id)}>
-                    <Trash2 size={18} /> Delete
-                  </button>
-                </div>
-              ))}
+            <div className="dashboard-header">
+              <h1>Client Inquiries</h1>
+              <p>Manage incoming contact messages and requests</p>
             </div>
+            {contacts.length === 0 ? (
+              <div className="glass-card" style={{ padding: '3rem', textAlign: 'center', marginTop: '2rem' }}>
+                <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '1rem' }}>No inquiries yet. Your contact messages will appear here.</p>
+              </div>
+            ) : (
+              <div className="contacts-list">
+                {contacts.map(contact => (
+                  <div key={contact._id} className="contact-item">
+                    <h3>{contact.name}</h3>
+                    <p><strong>Email:</strong> {contact.email} | <strong>Phone:</strong> {contact.phone}</p>
+                    <p className="contact-message">{contact.message}</p>
+                    <span className={`status ${contact.status}`}>{contact.status}</span>
+                    <button className="delete-btn" onClick={() => deleteItem('contact', contact._id)}>
+                      <Trash2 size={18} /> Delete
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
       </div>
     </div>
   );
 };
+
 
 export default AdminDashboard;

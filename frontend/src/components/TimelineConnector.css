@@ -1,0 +1,66 @@
+/* Timeline Connector SVG Styling */
+.timeline-connector {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  pointer-events: none !important;
+  z-index: 0 !important;
+  display: block !important;
+  overflow: visible !important;
+}
+
+.connector-path {
+  filter: drop-shadow(0 0 3px rgba(201, 160, 93, 0.8));
+  animation: pathPulse 3s ease-in-out infinite;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@keyframes pathPulse {
+  0%, 100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* Ensure blog cards are above the connector */
+.blog-grid-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.blog-grid {
+  position: relative;
+  z-index: 1;
+}
+
+/* Tablet/Mobile responsive */
+@media (max-width: 1024px) {
+  .connector-path {
+    opacity: 0.7;
+  }
+}
+
+@media (max-width: 768px) {
+  .timeline-connector {
+    opacity: 0.5;
+  }
+
+  .connector-path {
+    opacity: 0.5;
+  }
+}
+
+@media (max-width: 480px) {
+  .timeline-connector {
+    opacity: 0.4;
+  }
+
+  .connector-path {
+    opacity: 0.4;
+  }
+}

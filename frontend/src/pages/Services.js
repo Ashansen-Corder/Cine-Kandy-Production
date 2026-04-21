@@ -7,42 +7,49 @@ import './Services.css';
 const Services = () => {
   const services = [
     {
-      icon: <Heart size={48} />,
+     
       title: 'Wedding Photography',
       description: 'Capture every precious moment of your special day with our artistic wedding photography services.',
       features: ['Full Day Coverage', 'Pre-Wedding Shoot', 'Candid Photography', 'Traditional Photography', 'Photo Album Design', 'Digital Gallery'],
       price: 'From LKR 150,000'
     },
     {
-      icon: <Film size={48} />,
+    
       title: 'Cinematic Videography',
       description: 'Create stunning cinematic films that tell your story with emotion and elegance.',
       features: ['4K Video Production', 'Drone Footage', 'Professional Editing', 'Color Grading', 'Background Music', 'Highlight Reel'],
       price: 'From LKR 200,000'
     },
     {
-      icon: <Users size={48} />,
+    
+      title: 'Dronography',
+      description: 'Aerial cinematography by licensed pilots delivering sweeping perspectives, dynamic fly-throughs, and stabilized tracking shots.',
+      features: ['Licensed Drone Pilots', '4K/60fps Capture', 'Cinematic Fly-Throughs', 'Live Monitoring Feed', 'Safety & Permits Assistance', 'RAW Footage & Edited Clips'],
+      price: 'From LKR 120,000'
+    },
+    {
+      
       title: 'Corporate Events',
       description: 'Professional coverage of conferences, seminars, and corporate gatherings.',
       features: ['Event Documentation', 'Team Photography', 'Brand Integration', 'Same Day Delivery', 'Multi-Camera Setup', 'Live Streaming'],
       price: 'Custom Quote'
     },
     {
-      icon: <Sparkles size={48} />,
+      
       title: 'Special Events',
       description: 'Birthday parties, anniversaries, and other milestone celebrations captured beautifully.',
       features: ['Party Coverage', 'Candid Moments', 'Decoration Photography', 'Guest Photography', 'Highlight Video', 'Online Gallery'],
       price: 'From LKR 75,000'
     },
     {
-      icon: <Camera size={48} />,
+     
       title: 'Portrait Photography',
       description: 'Professional portraits for individuals, families, and professional headshots.',
       features: ['Studio Session', 'Outdoor Session', 'Professional Lighting', 'Retouching', 'Multiple Outfits', 'Digital Files'],
       price: 'From LKR 25,000'
     },
     {
-      icon: <Video size={48} />,
+      
       title: 'Commercial Videos',
       description: 'High-quality promotional videos and advertisements for businesses.',
       features: ['Concept Development', 'Scriptwriting', 'Professional Equipment', 'Motion Graphics', 'Voice Over', 'Social Media Formats'],
@@ -123,74 +130,57 @@ const Services = () => {
       </motion.div>
 
       <div className="container section">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-        >
+        <div data-scroll="blur-up" data-scroll-duration="slow">
           <h2 className="section-title">What We Offer</h2>
           <p className="section-subtitle">
             Comprehensive photography and videography solutions for every occasion
           </p>
+        </div>
 
-          <div className="services-grid">
-            {services.map((service, index) => (
-              <motion.div
-                key={index}
-                className="service-card"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                whileHover={{ y: -10 }}
-              >
-                <div className="service-icon">{service.icon}</div>
-                <h3 className="service-title">{service.title}</h3>
-                <p className="service-description">{service.description}</p>
-                <ul className="service-features">
-                  {service.features.map((feature, idx) => (
-                    <li key={idx}>
-                      <CheckCircle size={18} />
-                      <span>{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-                <div className="service-price">{service.price}</div>
-                <Link to="/contact" className="service-btn">
-                  Book Now <ArrowRight size={18} />
-                </Link>
-              </motion.div>
+        <div className="services-grid">
+          {services.map((service, index) => (
+            <div key={index} data-scroll="slide-up" data-scroll-delay={index * 150}>
+                <motion.div
+                  className="service-card"
+                  whileHover={{ y: -10 }}
+                >
+                  <div className="service-icon">{service.icon}</div>
+                  <h3 className="service-title">{service.title}</h3>
+                  <p className="service-description">{service.description}</p>
+                  <ul className="service-features">
+                    {service.features.map((feature, idx) => (
+                      <li key={idx}>
+                        <CheckCircle size={18} />
+                        <span>{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <div className="service-price">{service.price}</div>
+                  <Link to="/contact" className="service-btn">
+                    Book Now <ArrowRight size={18} />
+                  </Link>
+                </motion.div>
+              </div>
             ))}
           </div>
-        </motion.div>
-      </div>
+        </div>
 
       <div className="packages-section">
         <div className="container">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-          >
+          <div data-scroll="blur-up" data-scroll-duration="slow">
             <h2 className="section-title">Wedding Packages</h2>
             <p className="section-subtitle">
               Choose the perfect package for your special day
             </p>
+          </div>
 
-            <div className="packages-grid">
-              {packages.map((pkg, index) => (
+          <div className="packages-grid">
+            {packages.map((pkg, index) => (
+              <div key={index} data-scroll="fade-up" data-scroll-delay={index * 200} data-scroll-easing="ease-out">
                 <motion.div
-                  key={index}
                   className={`package-card ${pkg.popular ? 'popular' : ''}`}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6, delay: index * 0.1 }}
-                  whileHover={{ y: -15, scale: 1.02 }}
+                  whileHover={{ y: -6 }}
                 >
-                  {pkg.popular && <div className="popular-badge">Most Popular</div>}
                   <h3 className="package-name">{pkg.name}</h3>
                   <div className="package-price">{pkg.price}</div>
                   <div className="package-duration">{pkg.duration}</div>
@@ -206,25 +196,11 @@ const Services = () => {
                     Select Package
                   </Link>
                 </motion.div>
-              ))}
-            </div>
-          </motion.div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
-
-      <motion.div 
-        className="services-cta"
-        initial={{ opacity: 0, scale: 0.9 }}
-        whileInView={{ opacity: 1, scale: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.8 }}
-      >
-        <h2>Ready to Create Magic Together?</h2>
-        <p>Contact us today to discuss your project and get a custom quote</p>
-        <Link to="/contact" className="btn btn-primary">
-          Get In Touch <ArrowRight size={20} />
-        </Link>
-      </motion.div>
     </div>
   );
 };
