@@ -8,6 +8,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const nodemailer = require('nodemailer');
 require('dotenv').config();
 
 const app = express();
@@ -327,10 +328,79 @@ app.get('/api/blog', (req, res) => {
 // ========================================
 // CONTACT ROUTES
 // ========================================
+const Contact = require('./models/Contact');
 
-app.get('/api/contact', (req, res) => {
-  // Return empty contacts array for now
-  res.json([]);
+// Nodemailer Config
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: 'kaizersen570@gmail.com',
+    pass: process.env.EMAIL_PASS
+  }
+});
+
+app.post('/api/contact', async (req, res) => {
+  try {
+    const { name, email, phone, message } = req.body;
+
+    // 1. Save to Database
+    if (mongoConnected) {
+      const newContact = new Contact({
+        name,
+        email,
+        phone,
+        message
+      });
+      await newContact.save();
+    } else {
+      const newContact = {
+        _id: String(Date.now()),
+        name, email, phone, message, createdAt: new Date()
+      };
+      memoryStore.contacts.push(newContact);
+    }
+
+    // 2. Send Email
+    const mailOptions = {
+      from: 'kaizersen570@gmail.com',
+      to: 'kaizersen570@gmail.com',
+      subject: `New Contact Inquiry from ${name}`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
+          <h2 style="color: #333; text-align: center;">New Contact Inquiry</h2>
+          <p><strong>Name:</strong> ${name}</p>
+          <p><strong>Email:</strong> ${email}</p>
+          <p><strong>Phone:</strong> ${phone || 'N/A'}</p>
+          <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;" />
+          <h3 style="color: #555;">Message Details</h3>
+          <pre style="font-family: Arial, sans-serif; white-space: pre-wrap; color: #444;">${message}</pre>
+        </div>
+      `
+    };
+
+    // Send email asynchronously and don't block response client
+    transporter.sendMail(mailOptions).catch(err => {
+      console.error('Nodemailer send error:', err.message);
+    });
+
+    res.status(201).json({ success: true, message: 'Message sent successfully.' });
+  } catch (error) {
+    console.error('Contact submit error:', error);
+    res.status(500).json({ success: false, error: error.message || 'Failed to process inquiry', stack: error.stack });
+  }
+});
+
+app.get('/api/contact', async (req, res) => {
+  try {
+    if (mongoConnected) {
+      const contacts = await Contact.find().sort({ createdAt: -1 });
+      res.json(contacts);
+    } else {
+      res.json(memoryStore.contacts);
+    }
+  } catch (err) {
+    res.json([]);
+  }
 });
 
 // ===== DELETE ENDPOINTS =====

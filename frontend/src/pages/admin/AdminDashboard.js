@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Image, FileText, Mail, LogOut, Plus, Trash2, Edit, LayoutDashboard, Settings, Film, Play } from 'lucide-react';
+import { Image, FileText, Mail, LogOut, Plus, Trash2, Edit, LayoutDashboard, Settings, Film, Play, CalendarDays } from 'lucide-react';
 import { authApi } from '../../apiClient';
 import './Admin.css';
 
@@ -10,10 +10,14 @@ const AdminDashboard = () => {
   const [galleryItems, setGalleryItems] = useState([]);
   const [blogs, setBlogs] = useState([]);
   const [contacts, setContacts] = useState([]);
+  const [events, setEvents] = useState([]);
   const [showModal, setShowModal] = useState(false);
+  const [showEventModal, setShowEventModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [modalType, setModalType] = useState('image'); // 'image' or 'video'
-  
+  const [editingId, setEditingId] = useState(null); // Track which item is being edited
+  const [editingEventId, setEditingEventId] = useState(null);
+
   const [galleryForm, setGalleryForm] = useState({
     title: '',
     description: '',
@@ -21,6 +25,14 @@ const AdminDashboard = () => {
     type: 'Image',
     image: '',
     vimeoUrl: ''
+  });
+
+  const [eventForm, setEventForm] = useState({
+    title: '',
+    description: '',
+    date: '',
+    location: '',
+    image: ''
   });
   
   const navigate = useNavigate();
@@ -43,6 +55,9 @@ const AdminDashboard = () => {
       } else if (activeTab === 'contacts') {
         const contactsRes = await api.get('/contact');
         setContacts(contactsRes.data);
+      } else if (activeTab === 'events') {
+        const eventsRes = await api.get('/events');
+        setEvents(eventsRes.data.data || eventsRes.data);
       }
     } catch (error) {
       if (error.response?.status === 401) {
@@ -71,6 +86,87 @@ const AdminDashboard = () => {
       } catch (error) {
         alert('Error deleting item');
       }
+    }
+  };
+
+  // Open edit modal with item data
+  const openEditModal = (item) => {
+    setEditingId(item._id);
+    setModalType(item.type === 'Video' ? 'video' : 'image');
+    setGalleryForm({
+      title: item.title,
+      description: item.description || '',
+      category: item.category,
+      type: item.type,
+      image: item.image || '',
+      vimeoUrl: item.vimeoUrl || ''
+    });
+    setShowModal(true);
+  };
+
+  // Close modal and reset form
+  const closeModal = () => {
+    setShowModal(false);
+    setEditingId(null);
+    setGalleryForm({
+      title: '',
+      description: '',
+      category: 'Weddings',
+      type: 'Image',
+      image: '',
+      vimeoUrl: ''
+    });
+  };
+
+  // Open event modal for edit
+  const openEditEventModal = (event) => {
+    setEditingEventId(event._id);
+    setEventForm({
+      title: event.title,
+      description: event.description || '',
+      date: event.date ? event.date.slice(0, 10) : '',
+      location: event.location || '',
+      image: event.image || ''
+    });
+    setShowEventModal(true);
+  };
+
+  // Close event modal
+  const closeEventModal = () => {
+    setShowEventModal(false);
+    setEditingEventId(null);
+    setEventForm({ title: '', description: '', date: '', location: '', image: '' });
+  };
+
+  // Handle event form submit
+  const handleEventSubmit = async (e) => {
+    e.preventDefault();
+    if (!eventForm.title || !eventForm.date) {
+      alert('Please fill in title and date');
+      return;
+    }
+    try {
+      setIsSubmitting(true);
+      const payload = {
+        title: eventForm.title,
+        description: eventForm.description,
+        date: eventForm.date,
+        location: eventForm.location,
+        image: eventForm.image
+      };
+      if (editingEventId) {
+        await api.put(`/events/${editingEventId}`, payload);
+        alert('Event updated successfully!');
+      } else {
+        await api.post('/events', payload);
+        alert('Event added successfully!');
+      }
+      closeEventModal();
+      loadData();
+    } catch (error) {
+      alert('Error: ' + (error.response?.data?.error || error.message));
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -110,18 +206,17 @@ const AdminDashboard = () => {
         payload.vimeoUrl = galleryForm.vimeoUrl;
       }
 
-      await api.post('/gallery', payload);
-      alert(`${modalType === 'image' ? 'Image' : 'Video'} added successfully!`);
+      if (editingId) {
+        // Update existing item
+        await api.put(`/gallery/${editingId}`, payload);
+        alert(`${modalType === 'image' ? 'Image' : 'Video'} updated successfully!`);
+      } else {
+        // Create new item
+        await api.post('/gallery', payload);
+        alert(`${modalType === 'image' ? 'Image' : 'Video'} added successfully!`);
+      }
       
-      setGalleryForm({
-        title: '',
-        description: '',
-        category: 'Weddings',
-        type: 'Image',
-        image: '',
-        vimeoUrl: ''
-      });
-      setShowModal(false);
+      closeModal();
       loadData();
     } catch (error) {
       alert('Error: ' + (error.response?.data?.error || error.message));
@@ -166,6 +261,13 @@ const AdminDashboard = () => {
           >
             <Mail size={22} />
             <span>Inquiries</span>
+          </button>
+          <button 
+            onClick={() => setActiveTab('events')} 
+            className={`nav-btn ${activeTab === 'events' ? 'active' : ''}`}
+          >
+            <CalendarDays size={22} />
+            <span>Events</span>
           </button>
           <button className="nav-btn">
             <Settings size={22} />
@@ -240,13 +342,13 @@ const AdminDashboard = () => {
 
             {/* ===== MODAL FOR ADD GALLERY ITEM ===== */}
             {showModal && (
-              <div className="modal-overlay-gallery" onClick={() => setShowModal(false)}>
+              <div className="modal-overlay-gallery" onClick={closeModal}>
                 <div className="modal-content-gallery" onClick={(e) => e.stopPropagation()}>
                   <div className="modal-header-gallery">
-                    <h2>Add New {modalType === 'video' ? 'Video' : 'Image'}</h2>
+                    <h2>{editingId ? 'Edit' : 'Add New'} {modalType === 'video' ? 'Video' : 'Image'}</h2>
                     <button 
                       className="modal-close-btn"
-                      onClick={() => setShowModal(false)}
+                      onClick={closeModal}
                     >
                       ✕
                     </button>
@@ -322,12 +424,12 @@ const AdminDashboard = () => {
                         className="btn btn-primary"
                         disabled={isSubmitting}
                       >
-                        {isSubmitting ? 'Saving...' : 'Save Item'}
+                        {isSubmitting ? 'Saving...' : editingId ? 'Update Item' : 'Save Item'}
                       </button>
                       <button 
                         type="button"
                         className="btn btn-secondary"
-                        onClick={() => setShowModal(false)}
+                        onClick={closeModal}
                       >
                         Cancel
                       </button>
@@ -402,7 +504,7 @@ const AdminDashboard = () => {
                         <small style={{ color: '#C9A050' }}>{item.type}</small>
                       </div>
                       <div className="card-actions">
-                        <button className="edit-btn"><Edit size={18} /></button>
+                        <button className="edit-btn" onClick={() => openEditModal(item)}><Edit size={18} /></button>
                         <button className="delete-btn" onClick={() => deleteItem('gallery', item._id)}>
                           <Trash2 size={18} />
                         </button>
@@ -470,6 +572,135 @@ const AdminDashboard = () => {
                   </div>
                 ))}
               </div>
+            )}
+          </div>
+        )}
+
+        {activeTab === 'events' && (
+          <div>
+            <div className="dashboard-header">
+              <h1>Events</h1>
+              <p>Manage your upcoming and past events</p>
+            </div>
+
+            {/* ===== EVENT MODAL ===== */}
+            {showEventModal && (
+              <div className="modal-overlay-gallery" onClick={closeEventModal}>
+                <div className="modal-content-gallery" onClick={(e) => e.stopPropagation()}>
+                  <div className="modal-header-gallery">
+                    <h2>{editingEventId ? 'Edit Event' : 'Add New Event'}</h2>
+                    <button className="modal-close-btn" onClick={closeEventModal}>✕</button>
+                  </div>
+                  <form className="gallery-form" onSubmit={handleEventSubmit}>
+                    <div className="form-group-gallery">
+                      <label>Title *</label>
+                      <input
+                        type="text"
+                        placeholder="Event title"
+                        value={eventForm.title}
+                        onChange={(e) => setEventForm({...eventForm, title: e.target.value})}
+                        required
+                      />
+                    </div>
+                    <div className="form-group-gallery">
+                      <label>Description</label>
+                      <textarea
+                        placeholder="Event description..."
+                        value={eventForm.description}
+                        onChange={(e) => setEventForm({...eventForm, description: e.target.value})}
+                        rows="3"
+                      />
+                    </div>
+                    <div className="form-group-gallery">
+                      <label>Date *</label>
+                      <input
+                        type="date"
+                        value={eventForm.date}
+                        onChange={(e) => setEventForm({...eventForm, date: e.target.value})}
+                        required
+                      />
+                    </div>
+                    <div className="form-group-gallery">
+                      <label>Location</label>
+                      <input
+                        type="text"
+                        placeholder="Event location"
+                        value={eventForm.location}
+                        onChange={(e) => setEventForm({...eventForm, location: e.target.value})}
+                      />
+                    </div>
+                    <div className="form-group-gallery">
+                      <label>Cover Image URL</label>
+                      <input
+                        type="url"
+                        placeholder="https://example.com/image.jpg"
+                        value={eventForm.image}
+                        onChange={(e) => setEventForm({...eventForm, image: e.target.value})}
+                      />
+                    </div>
+                    <div className="modal-actions-gallery">
+                      <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
+                        {isSubmitting ? 'Saving...' : editingEventId ? 'Update Event' : 'Save Event'}
+                      </button>
+                      <button type="button" className="btn btn-secondary" onClick={closeEventModal}>
+                        Cancel
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            )}
+            {/* ===== END EVENT MODAL ===== */}
+
+            {events.length === 0 ? (
+              <div className="glass-card" style={{ padding: '3rem', textAlign: 'center', marginTop: '2rem' }}>
+                <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '1rem' }}>No events yet. Start by adding your first event.</p>
+                <button
+                  className="btn btn-primary"
+                  style={{ marginTop: '1rem' }}
+                  onClick={() => setShowEventModal(true)}
+                >
+                  <Plus size={20} /> Add Event
+                </button>
+              </div>
+            ) : (
+              <>
+                <div style={{ marginBottom: '2rem', textAlign: 'right' }}>
+                  <button className="btn btn-primary" onClick={() => setShowEventModal(true)}>
+                    <Plus size={20} /> Add Event
+                  </button>
+                </div>
+                <div className="events-grid">
+                  {events.map(event => (
+                    <div key={event._id} className="event-card">
+                      {event.image && (
+                        <img src={event.image} alt={event.title} className="event-card-img" />
+                      )}
+                      {!event.image && (
+                        <div className="event-card-img-placeholder">
+                          <CalendarDays size={40} color="#C9A050" />
+                        </div>
+                      )}
+                      <div className="event-card-body">
+                        <h3>{event.title}</h3>
+                        {event.date && (
+                          <p className="event-date">📅 {new Date(event.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                        )}
+                        {event.location && (
+                          <p className="event-location">📍 {event.location}</p>
+                        )}
+                        {event.description && (
+                          <p className="event-desc">{event.description}</p>
+                        )}
+                      </div>
+                      <div className="card-actions">
+                        <button className="edit-btn" onClick={() => openEditEventModal(event)}><Edit size={18} /></button>
+                        <button className="delete-btn" onClick={() => deleteItem('events', event._id)}><Trash2 size={18} /></button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </>
             )}
           </div>
         )}

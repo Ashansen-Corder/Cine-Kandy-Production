@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Send, Linkedin, Twitter } from 'lucide-react';
+import { Send } from 'lucide-react';
 import axios from 'axios';
 import './Contact.css';
 
@@ -248,80 +248,6 @@ Additional Info: ${formData.additionalInfo}
             {status === 'sending' ? 'Sending...' : 'Send Message'}
           </button>
         </form>
-      </div>
-
-      {/* Meet Our Team Section */}
-      <div className="meet-team-section">
-        <h2 className="team-title">Meet Our Team</h2>
-        <p className="team-subtitle">Passionate professionals dedicated to capturing your story</p>
-        
-        <div className="team-grid">
-          {/* Team Member 1 */}
-          <div className="team-member">
-            <div className="team-member-image-wrapper">
-              <img 
-                src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80"
-                alt="Saman Perera - Lead Photographer"
-                className="team-member-image"
-              />
-            </div>
-            <h3 className="team-member-name">Saman Perera</h3>
-            <p className="team-member-role">Lead Photographer</p>
-            <p className="team-member-tagline">"Every moment tells a story worth preserving forever"</p>
-            <div className="team-social-icons">
-              <a href="#" className="social-icon linkedin" title="LinkedIn">
-                <Linkedin size={20} />
-              </a>
-              <a href="#" className="social-icon twitter" title="Twitter">
-                <Twitter size={20} />
-              </a>
-            </div>
-          </div>
-
-          {/* Team Member 2 */}
-          <div className="team-member">
-            <div className="team-member-image-wrapper">
-              <img 
-                src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&q=80"
-                alt="Nimal Silva - Videographer"
-                className="team-member-image"
-              />
-            </div>
-            <h3 className="team-member-name">Nimal Silva</h3>
-            <p className="team-member-role">Videographer</p>
-            <p className="team-member-tagline">"Motion is the poetry of your life's most beautiful chapters"</p>
-            <div className="team-social-icons">
-              <a href="#" className="social-icon linkedin" title="LinkedIn">
-                <Linkedin size={20} />
-              </a>
-              <a href="#" className="social-icon twitter" title="Twitter">
-                <Twitter size={20} />
-              </a>
-            </div>
-          </div>
-
-          {/* Team Member 3 */}
-          <div className="team-member">
-            <div className="team-member-image-wrapper">
-              <img 
-                src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&q=80"
-                alt="Kasun Fernando - Creative Director"
-                className="team-member-image"
-              />
-            </div>
-            <h3 className="team-member-name">Kasun Fernando</h3>
-            <p className="team-member-role">Creative Director</p>
-            <p className="team-member-tagline">"Artistry meets precision in every frame we create"</p>
-            <div className="team-social-icons">
-              <a href="#" className="social-icon linkedin" title="LinkedIn">
-                <Linkedin size={20} />
-              </a>
-              <a href="#" className="social-icon twitter" title="Twitter">
-                <Twitter size={20} />
-              </a>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   );

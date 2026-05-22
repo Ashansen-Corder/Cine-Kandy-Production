@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
 import { Award, Users, Camera, Heart, Mail, Phone, MapPin } from 'lucide-react';
-import axios from 'axios';
 import buddika from '../assets/buddika.jpg';
 import './About.css';
 
@@ -9,55 +8,9 @@ const About = () => {
   const values = [
     { icon: <Camera />, title: 'Quality', desc: 'Premium equipment and techniques' },
     { icon: <Heart />, title: 'Passion', desc: 'We love what we do' },
-    { icon: <Users />, title: 'Experience', desc: '8+ years in the industry' },
+    { icon: <Users />, title: 'Experience', desc: '4+ years in the industry' },
     { icon: <Award />, title: 'Excellence', desc: 'Award-winning work' }
   ];
-
-  const [formData, setFormData] = useState({
-    spouseName: '',
-    instagramHandle: '',
-    weddingDate: '',
-    inquiryType: ''
-  });
-
-  const [status, setStatus] = useState('');
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setStatus('sending');
-    try {
-      await axios.post('http://localhost:5000/api/contact', {
-        name: formData.spouseName,
-        email: 'wedding@inquiry.com',
-        phone: '',
-        message: `
-Future Spouse: ${formData.spouseName}
-Instagram: ${formData.instagramHandle}
-Wedding Date: ${formData.weddingDate}
-Service Inquiry: ${formData.inquiryType}
-        `
-      });
-      setStatus('success');
-      setFormData({
-        spouseName: '',
-        instagramHandle: '',
-        weddingDate: '',
-        inquiryType: ''
-      });
-      setTimeout(() => setStatus(''), 3000);
-    } catch (error) {
-      setStatus('error');
-      setTimeout(() => setStatus(''), 3000);
-    }
-  };
 
   return (
     <div className="about-page">
@@ -91,11 +44,11 @@ Service Inquiry: ${formData.inquiryType}
         <div className="marquee-track">
           <span className="marquee-item">• Premium Cinematography</span>
           <span className="marquee-item">• Award-Winning Experts</span>
-          <span className="marquee-item">• 8+ Years Excellence</span>
+          <span className="marquee-item">• 4+ Years Excellence</span>
           <span className="marquee-item">• Luxury Production</span>
           <span className="marquee-item">• Premium Cinematography</span>
           <span className="marquee-item">• Award-Winning Experts</span>
-          <span className="marquee-item">• 8+ Years Excellence</span>
+          <span className="marquee-item">• 4+ Years Excellence</span>
           <span className="marquee-item">• Luxury Production</span>
         </div>
       </section>
@@ -105,8 +58,7 @@ Service Inquiry: ${formData.inquiryType}
         <motion.div 
           className="story-section"
           initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
+          whileInView={{ opacity: 1, y: 0 }}          transition={{ duration: 0.8 }}
           viewport={{ once: true }}
         >
           <h2 className="about-section-title">Our Story</h2>
@@ -190,7 +142,7 @@ Service Inquiry: ${formData.inquiryType}
           </motion.div>
         </motion.div>
 
-        {/* Contact CTA Section */}
+        {/* Contact Info Section (Form Removed) */}
         <motion.div 
           className="contact-cta-section"
           initial={{ opacity: 0, y: 20 }}
@@ -228,96 +180,6 @@ Service Inquiry: ${formData.inquiryType}
               <p>Kandy, Sri Lanka</p>
             </motion.div>
           </div>
-
-          {/* Contact Form */}
-          <motion.div 
-            className="contact-form-section"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            viewport={{ once: true }}
-          >
-            <div className="contact-form-wrapper">
-              {status === 'success' && (
-                <div className="form-status-message success">
-                  Thank you! We'll be in touch within 24 hours.
-                </div>
-              )}
-              {status === 'error' && (
-                <div className="form-status-message error">
-                  Something went wrong. Please try again.
-                </div>
-              )}
-              <form onSubmit={handleSubmit}>
-                <div className="form-group">
-                  <label htmlFor="spouseName">Future Spouse's Name</label>
-                  <input
-                    type="text"
-                    id="spouseName"
-                    name="spouseName"
-                    value={formData.spouseName}
-                    onChange={handleChange}
-                    placeholder="Partner's name"
-                    required
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label htmlFor="instagramHandle">Instagram Handle</label>
-                  <input
-                    type="text"
-                    id="instagramHandle"
-                    name="instagramHandle"
-                    value={formData.instagramHandle}
-                    onChange={handleChange}
-                    placeholder="@yourinsta"
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label htmlFor="weddingDate">Wedding Date</label>
-                  <input
-                    type="date"
-                    id="weddingDate"
-                    name="weddingDate"
-                    value={formData.weddingDate}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label htmlFor="inquiryType">Type of Service</label>
-                  <select
-                    id="inquiryType"
-                    name="inquiryType"
-                    value={formData.inquiryType}
-                    onChange={handleChange}
-                    required
-                  >
-                    <option value="">Select service type</option>
-                    <option value="Wedding Photography">Wedding Photography</option>
-                    <option value="Videography">Videography</option>
-                    <option value="Cinematic Films">Cinematic Films</option>
-                    <option value="Event Coverage">Event Coverage</option>
-                    <option value="Pre-Wedding Shoot">Pre-Wedding Shoot</option>
-                    <option value="Drone Photography">Drone Photography</option>
-                    <option value="Other">Other</option>
-                  </select>
-                </div>
-
-                <motion.button 
-                  type="submit"
-                  className="form-submit-btn"
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  disabled={status === 'sending'}
-                >
-                  {status === 'sending' ? 'Sending...' : 'Send Inquiry'}
-                </motion.button>
-              </form>
-            </div>
-          </motion.div>
         </motion.div>
       </div>
     </div>

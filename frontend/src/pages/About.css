@@ -53,7 +53,7 @@
 /* Section Titles - Dark Mode White */
 .about-section-title {
   color: #ffffff !important;
-  font-size: 3rem;
+  font-size: 2rem;
   font-weight: 700;
   font-family: 'Playfair Display', serif;
   text-align: center;
@@ -78,7 +78,7 @@
 }
 
 .about-text {
-  font-size: 1.05rem;
+  font-size: .75rem;
   line-height: 1.8;
   color: #E0E0E0;
   max-width: 800px;
