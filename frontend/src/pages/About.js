@@ -163,13 +163,13 @@ const About = () => {
               <p>info@cinekandy.com</p>
             </motion.a>
             <motion.a 
-              href="tel:+94701234567"
+              href="tel:0752026577"
               className="contact-card"
               whileHover={{ y: -8 }}
             >
               <Phone className="contact-icon" />
               <h3>Phone</h3>
-              <p>+94 70 123 4567</p>
+              <p>0752026577</p>
             </motion.a>
             <motion.div 
               className="contact-card"

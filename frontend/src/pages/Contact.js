@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
-import { Send } from 'lucide-react';
+import { Send, FileText, MessageSquare, CheckCircle2 } from 'lucide-react';
 import axios from 'axios';
+import { jsPDF } from 'jspdf';
 import './Contact.css';
+
+const TARGET_PHONE_NUMBER = '94752026577';
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -18,6 +21,7 @@ const Contact = () => {
     additionalInfo: ''
   });
   const [status, setStatus] = useState('');
+  const [lastSubmittedData, setLastSubmittedData] = useState(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -27,25 +31,176 @@ const Contact = () => {
     }));
   };
 
+  const generatePDF = (data) => {
+    const doc = new jsPDF({
+      orientation: 'portrait',
+      unit: 'mm',
+      format: 'a4'
+    });
+
+    // Dark Header Banner
+    doc.setFillColor(17, 17, 17);
+    doc.rect(0, 0, 210, 42, 'F');
+
+    // Gold Accent Line
+    doc.setFillColor(255, 215, 0);
+    doc.rect(0, 41, 210, 1.5, 'F');
+
+    // Brand Name & Subtitle
+    doc.setTextColor(255, 215, 0);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(22);
+    doc.text('CINE KANDY FILMS', 15, 18);
+
+    doc.setTextColor(230, 230, 230);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    doc.text('Wedding & Event Inquiry Summary', 15, 27);
+
+    // Date
+    const today = new Date().toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+    doc.setTextColor(160, 160, 160);
+    doc.setFontSize(9);
+    doc.text(`Date: ${today}`, 150, 27);
+
+    let y = 54;
+
+    // Section Header
+    doc.setTextColor(20, 20, 20);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(13);
+    doc.text('CLIENT & INQUIRY DETAILS', 15, y);
+
+    y += 3;
+    doc.setDrawColor(220, 220, 220);
+    doc.setLineWidth(0.4);
+    doc.line(15, y, 195, y);
+
+    y += 8;
+
+    const fields = [
+      { label: 'Client Name', value: data.name },
+      { label: 'Email Address', value: data.email },
+      { label: 'Phone Number', value: data.phone || 'N/A' },
+      { label: 'Spouse Name', value: data.spouseName || 'N/A' },
+      { label: 'Instagram Handle', value: data.instagram || 'N/A' },
+      { label: 'Inquiry Type', value: data.inquiryType || 'General Inquiry' },
+      { label: 'Wedding Date', value: data.weddingDate || 'N/A' },
+      { label: 'Wedding Location', value: data.weddingLocation || 'N/A' },
+      { label: 'Approximate Budget', value: data.budget || 'N/A' },
+      { label: 'Attracted To', value: data.attracted || 'N/A' }
+    ];
+
+    fields.forEach((field) => {
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(10);
+      doc.setTextColor(70, 70, 70);
+      doc.text(`${field.label}:`, 15, y);
+
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(10);
+      doc.setTextColor(20, 20, 20);
+      doc.text(String(field.value), 65, y);
+
+      y += 8;
+    });
+
+    y += 4;
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(12);
+    doc.setTextColor(20, 20, 20);
+    doc.text('ADDITIONAL STORY & DETAILS', 15, y);
+
+    y += 3;
+    doc.line(15, y, 195, y);
+    y += 8;
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    doc.setTextColor(40, 40, 40);
+
+    const splitText = doc.splitTextToSize(data.additionalInfo || 'None provided.', 180);
+    doc.text(splitText, 15, y);
+
+    // Footer Box
+    doc.setFillColor(248, 248, 248);
+    doc.rect(15, 260, 180, 22, 'F');
+    doc.setDrawColor(230, 230, 230);
+    doc.rect(15, 260, 180, 22, 'S');
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(9);
+    doc.setTextColor(50, 50, 50);
+    doc.text('Cine Kandy Films | Official Inquiry PDF', 105, 268, { align: 'center' });
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8);
+    doc.setTextColor(100, 100, 100);
+    doc.text('Direct WhatsApp: 0752026577 | Sent via Cine Kandy Website', 105, 274, { align: 'center' });
+
+    const safeName = (data.name || 'Inquiry').replace(/[^a-zA-Z0-9]/g, '_');
+    const filename = `CineKandy_Inquiry_${safeName}.pdf`;
+    doc.save(filename);
+  };
+
+  const openWhatsApp = (data) => {
+    const message = `*CINE KANDY FILMS - NEW INQUIRY* 📄
+
+*Client Name:* ${data.name}
+*Email:* ${data.email}
+*Phone:* ${data.phone || 'N/A'}
+*Spouse Name:* ${data.spouseName || 'N/A'}
+*Instagram:* ${data.instagram || 'N/A'}
+*Inquiry Type:* ${data.inquiryType || 'General Inquiry'}
+*Wedding Date:* ${data.weddingDate || 'N/A'}
+*Location:* ${data.weddingLocation || 'N/A'}
+*Budget:* ${data.budget || 'N/A'}
+*Attracted To:* ${data.attracted || 'N/A'}
+
+*Additional Info:*
+${data.additionalInfo || 'N/A'}
+
+*(PDF Inquiry Document has been generated & downloaded to client device)*`;
+
+    const waUrl = `https://wa.me/${TARGET_PHONE_NUMBER}?text=${encodeURIComponent(message)}`;
+    window.open(waUrl, '_blank');
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setStatus('sending');
+
+    const currentData = { ...formData };
+    setLastSubmittedData(currentData);
+
     try {
+      // 1. Generate & download PDF locally
+      generatePDF(currentData);
+
+      // 2. Save inquiry to backend API (without mandatory email sending)
       await axios.post('http://localhost:5000/api/contact', {
-        name: formData.name,
-        email: formData.email,
-        phone: formData.phone,
+        name: currentData.name,
+        email: currentData.email,
+        phone: currentData.phone,
         message: `
-Spouse Name: ${formData.spouseName}
-Instagram: ${formData.instagram}
-Inquiry Type: ${formData.inquiryType}
-Wedding Date: ${formData.weddingDate}
-Wedding Location: ${formData.weddingLocation}
-Budget: ${formData.budget}
-What Attracted You: ${formData.attracted}
-Additional Info: ${formData.additionalInfo}
+Spouse Name: ${currentData.spouseName}
+Instagram: ${currentData.instagram}
+Inquiry Type: ${currentData.inquiryType}
+Wedding Date: ${currentData.weddingDate}
+Wedding Location: ${currentData.weddingLocation}
+Budget: ${currentData.budget}
+What Attracted You: ${currentData.attracted}
+Additional Info: ${currentData.additionalInfo}
         `
-      });
+      }).catch(err => console.warn('Backend save notice:', err));
+
+      // 3. Open WhatsApp chat with target number 0752026577
+      openWhatsApp(currentData);
+
       setStatus('success');
       setFormData({
         name: '',
@@ -60,10 +215,9 @@ Additional Info: ${formData.additionalInfo}
         attracted: '',
         additionalInfo: ''
       });
-      setTimeout(() => setStatus(''), 5000);
     } catch (error) {
+      console.error('Contact submit error:', error);
       setStatus('error');
-      console.error('Contact form error:', error);
     }
   };
 
@@ -121,14 +275,14 @@ Additional Info: ${formData.additionalInfo}
 
           {/* Phone */}
           <div className="form-group">
-            <label htmlFor="phone">Phone number (in case my response goes to your spam)</label>
+            <label htmlFor="phone">Phone number</label>
             <input
               id="phone"
               type="tel"
               name="phone"
               value={formData.phone}
               onChange={handleChange}
-              placeholder="E.g. 541 444 0755"
+              placeholder="E.g. +94 77 123 4567"
             />
           </div>
 
@@ -185,7 +339,7 @@ Additional Info: ${formData.additionalInfo}
               name="weddingLocation"
               value={formData.weddingLocation}
               onChange={handleChange}
-              placeholder="Halfway around the world...or right here in Michigan?"
+              placeholder="Kandy, Colombo, or destination location"
             />
           </div>
 
@@ -198,7 +352,7 @@ Additional Info: ${formData.additionalInfo}
               name="budget"
               value={formData.budget}
               onChange={handleChange}
-              placeholder="e.g. $3,000 - $5,000"
+              placeholder="e.g. LKR 200,000"
             />
           </div>
 
@@ -229,23 +383,48 @@ Additional Info: ${formData.additionalInfo}
             />
           </div>
 
-          {/* Messages */}
+          {/* Status Notifications */}
           {status === 'success' && (
-            <div className="success-msg">
-              Message sent successfully! We will get back to you soon.
+            <div className="pdf-success-box">
+              <div className="pdf-success-header">
+                <CheckCircle2 size={24} className="success-icon" />
+                <div>
+                  <h4>Inquiry Sent Successfully!</h4>
+                  <p>Your inquiry PDF was generated & sent directly to <strong>0752026577</strong> via WhatsApp.</p>
+                </div>
+              </div>
+
+              {lastSubmittedData && (
+                <div className="pdf-action-buttons">
+                  <button
+                    type="button"
+                    className="pdf-btn download-btn"
+                    onClick={() => generatePDF(lastSubmittedData)}
+                  >
+                    <FileText size={16} /> Re-download PDF
+                  </button>
+                  <button
+                    type="button"
+                    className="pdf-btn whatsapp-btn"
+                    onClick={() => openWhatsApp(lastSubmittedData)}
+                  >
+                    <MessageSquare size={16} /> Open WhatsApp (0752026577)
+                  </button>
+                </div>
+              )}
             </div>
           )}
 
           {status === 'error' && (
             <div className="error-msg">
-              Failed to send message. Please try again.
+              Failed to process inquiry. Please try again or contact 0752026577 on WhatsApp directly.
             </div>
           )}
 
           {/* Submit Button */}
           <button type="submit" className="submit-btn" disabled={status === 'sending'}>
             <Send size={18} />
-            {status === 'sending' ? 'Sending...' : 'Send Message'}
+            {status === 'sending' ? 'Generating PDF & Sending...' : 'Send Message (PDF & WhatsApp)'}
           </button>
         </form>
       </div>
