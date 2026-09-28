@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Instagram, Facebook, Mail, Phone, MapPin, Linkedin, Youtube, Play } from 'lucide-react';
+import { Menu, X, Instagram, Facebook, Mail, Play } from 'lucide-react';
 import './App.css';
-import peraheraParade from './assets/perahera-parade.png';
 import asLogo from './assets/Artboard-1@4x.png';
 // Components
 import Home from './pages/Home';
@@ -88,21 +87,6 @@ function Navigation() {
   );
 }
 
-function Layout({ children }) {
-  return (
-    <div className="video-wrapper">
-      {/* --- Background Video eka methana --- */}
-      <video autoPlay loop muted playsInline className="background-video">
-        <source src="./assets/HB.mp4" type="video/mp4" />
-      </video>
-
-      {/* --- Oyage Content eka methana --- */}
-      <div className="content-layer">
-        {children}
-      </div>
-    </div>
-  );
-}
 function Footer() {
   return (
     <footer className="footer">

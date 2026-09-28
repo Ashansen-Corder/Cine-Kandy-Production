@@ -61,8 +61,9 @@ const Home = () => {
     { number: '100%', label: 'Client Satisfaction' }
   ];
 
-
+  // eslint-disable-next-line no-unused-vars
   const services = [
+
     {
       id: 1,
       title: 'Photography Services',

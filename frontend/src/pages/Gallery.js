@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
-import { Play, X, Maximize2 } from 'lucide-react';
+import { Play, X } from 'lucide-react';
+
 import './Gallery.css'; 
 
 const Gallery = () => {
   const [galleryItems, setGalleryItems] = useState([]);
   const [loading, setLoading] = useState(true);
+  // eslint-disable-next-line no-unused-vars
   const [error, setError] = useState(null);
+
   const [selectedItem, setSelectedItem] = useState(null);
 
   // Fetch gallery items from API
