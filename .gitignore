@@ -94,3 +94,13 @@ Thumbs.db
 .fusebox/
 .dynamodb/
 .vercel
+
+# ========== LARGE MEDIA FILES ==========
+# Large video files - use CDN/cloud storage instead
+*.mp4
+*.mov
+*.avi
+*.mkv
+*.webm
+# Exception: keep small essential videos if needed
+# !frontend/public/bg-video.mp4
