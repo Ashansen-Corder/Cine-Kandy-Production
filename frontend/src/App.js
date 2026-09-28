@@ -113,14 +113,14 @@ function Footer() {
           </div>
           
           <div className="footer-social-icons">
-            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="footer-social-icon" title="Facebook">
+            <a href="https://www.facebook.com/share/1DESzFWA97/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer" className="footer-social-icon" title="Facebook">
               <Facebook size={24} />
             </a>
-            <a href="https://vimeo.com" target="_blank" rel="noopener noreferrer" className="footer-social-icon" title="Vimeo">
-              <Play size={24} />
-            </a>
-            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="footer-social-icon" title="Instagram">
+            <a href="https://www.instagram.com/cinekandy_production" target="_blank" rel="noopener noreferrer" className="footer-social-icon" title="Instagram">
               <Instagram size={24} />
+            </a>
+            <a href="https://wa.me/94752026577" target="_blank" rel="noopener noreferrer" className="footer-social-icon" title="WhatsApp">
+              <Play size={24} />
             </a>
             <a href="mailto:contact@example.com" className="footer-social-icon" title="Email">
               <Mail size={24} />
