@@ -372,7 +372,7 @@ h1, h2, h3, h4, h5, h6 {
   backdrop-filter: none;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3) !important;
-  overflow: visible;
+  overflow: hidden;
 }
 
 .navbar::before {
@@ -742,64 +742,36 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* Responsive */
-/* Responsive Navbar */
 @media (max-width: 968px) {
   .nav-container {
-    padding: 0.5rem 1.25rem;
-    height: 70px;
-  }
-
-  .logo-image {
-    height: 55px;
-  }
-
-  .navbar.scrolled .logo-image {
-    height: 50px;
+    padding: 0 1rem;
   }
 
   .nav-links {
     position: fixed;
-    top: 70px;
-    left: 0;
+    top: 80px;
     right: 0;
-    width: 100vw;
-    height: calc(100vh - 70px);
-    background: #000000 !important;
-    background: rgba(10, 10, 10, 0.98) !important;
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    padding: 2rem 1.5rem;
-    display: flex;
+    left: auto;
+    width: 100%;
     flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 1.2rem;
+    background: none;
+    backdrop-filter: none;
+    padding: 2rem;
+    gap: 2rem;
     transform: translateX(100%);
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    border-top: 1px solid rgba(255, 215, 0, 0.15);
+    transition: var(--transition-smooth);
+    border-top: none;
     margin-left: 0;
-    overflow-y: auto;
-    z-index: 9999;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.9);
   }
 
   .nav-links .nav-link {
-    color: #ffffff !important;
-    font-size: 1.1rem !important;
-    font-weight: 500;
-    letter-spacing: 2px;
-    padding: 0.8rem 1rem;
-    text-transform: uppercase;
-    display: block;
-    width: 100%;
-    text-align: center;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    color: var(--light);
+    font-weight: 600;
   }
 
   .nav-links .nav-link:hover,
   .nav-links .nav-link.active {
-    color: #FFD700 !important;
-    border-bottom: 1px solid #FFD700;
+    color: var(--primary);
   }
 
   .nav-links.active {
@@ -807,16 +779,9 @@ h1, h2, h3, h4, h5, h6 {
   }
 
   .menu-toggle {
-    display: flex !important;
-    align-items: center;
-    justify-content: center;
+    display: block;
     margin-left: auto;
-    color: #ffffff !important;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    z-index: 10001;
-    padding: 0.5rem;
+    color: var(--light);
   }
 }
 

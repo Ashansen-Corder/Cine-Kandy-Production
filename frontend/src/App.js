@@ -68,7 +68,6 @@ function Navigation() {
               <Link 
                 to={link.path} 
                 className={`nav-link ${location.pathname === link.path ? 'active' : ''}`}
-                onClick={() => setIsOpen(false)}
               >
                 {link.label}
               </Link>
