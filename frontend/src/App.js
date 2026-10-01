@@ -35,6 +35,17 @@ function Navigation() {
     setIsOpen(false);
   }, [location]);
 
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isOpen]);
+
   const navLinks = [
     { path: '/', label: 'Home' },
     { path: '/gallery', label: 'Gallery' },
@@ -46,14 +57,9 @@ function Navigation() {
   ];
 
   return (
-    <motion.nav 
-      className={`navbar ${scrolled ? 'scrolled' : ''}`}
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      transition={{ duration: 0.6, ease: 'easeOut' }}
-    >
+    <nav className={`navbar ${scrolled ? 'scrolled' : ''}`}>
       <div className="nav-container">
-        <Link to="/" className="nav-logo">
+        <Link to="/" className="nav-logo" onClick={() => setIsOpen(false)}>
           <img src="/cinekandy-logo.png" alt="Cinekandy Production logo" className="logo-image" />
         </Link>
 
@@ -61,9 +67,10 @@ function Navigation() {
           {navLinks.map((link, index) => (
             <motion.div
               key={link.path}
-              initial={{ opacity: 0, y: -20 }}
+              initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
+              transition={{ delay: index * 0.05 }}
+              style={{ width: '100%' }}
             >
               <Link 
                 to={link.path} 
@@ -84,7 +91,7 @@ function Navigation() {
           {isOpen ? <X size={28} /> : <Menu size={28} />}
         </button>
       </div>
-    </motion.nav>
+    </nav>
   );
 }
 

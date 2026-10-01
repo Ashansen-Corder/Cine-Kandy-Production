@@ -104,3 +104,6 @@ Thumbs.db
 *.webm
 # Exception: keep small essential videos if needed
 # !frontend/public/bg-video.mp4
+
+# Local Netlify folder
+.netlify
