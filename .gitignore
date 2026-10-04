@@ -4,6 +4,7 @@
 
 # ========== NODE.JS DEPENDENCIES ==========
 node_modules/
+**/node_modules
 package-lock.json
 yarn.lock
 npm-debug.log*
@@ -51,6 +52,7 @@ backend/build/
 # General
 dist/
 build/
+**/build/
 
 # ========== TESTING & COVERAGE ==========
 /coverage
@@ -96,14 +98,11 @@ Thumbs.db
 .vercel
 
 # ========== LARGE MEDIA FILES ==========
-# Large video files - use CDN/cloud storage instead
 *.mp4
 *.mov
 *.avi
 *.mkv
 *.webm
-# Exception: keep small essential videos if needed
-# !frontend/public/bg-video.mp4
 
 # Local Netlify folder
 .netlify
