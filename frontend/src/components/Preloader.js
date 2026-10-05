@@ -9,25 +9,27 @@ const Preloader = ({ theme }) => {
 
   useEffect(() => {
     const video = videoRef.current;
-    
+    let exitTimer;
+
     const handleVideoEnd = () => {
-      setTimeout(() => {
-        setIsLoading(false);
-      }, 300);
+      exitTimer = setTimeout(() => setIsLoading(false), 300);
     };
 
-    if (video) {
-      video.addEventListener('ended', handleVideoEnd);
-      // Fallback: Hide preloader after 5 seconds if video doesn't end
-      const fallbackTimer = setTimeout(() => {
-        setIsLoading(false);
-      }, 5000);
-      
-      return () => {
-        clearTimeout(fallbackTimer);
-        video.removeEventListener('ended', handleVideoEnd);
-      };
-    }
+    if (!video) return undefined;
+
+    video.addEventListener('ended', handleVideoEnd);
+
+    // iOS Safari can reject autoplay until the video has been interacted with.
+    // The timeout guarantees the app is never blocked behind the intro.
+    const fallbackTimer = setTimeout(() => setIsLoading(false), 4500);
+    const playPromise = video.play();
+    playPromise?.catch(() => setIsLoading(false));
+
+    return () => {
+      clearTimeout(fallbackTimer);
+      clearTimeout(exitTimer);
+      video.removeEventListener('ended', handleVideoEnd);
+    };
   }, []);
 
   return (
@@ -45,10 +47,12 @@ const Preloader = ({ theme }) => {
             ref={videoRef}
             src={logoVideo}
             className="preloader-video"
+            poster="/cinekandy-logo.png"
             autoPlay
             muted
             playsInline
             disablePictureInPicture
+            aria-label="Cine Kandy"
           />
         </motion.div>
       )}
