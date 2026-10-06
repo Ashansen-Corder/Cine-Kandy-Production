@@ -454,17 +454,14 @@ const Gallery = () => {
   return (
     <div className="gallery-page">
       <motion.section
+        className="gallery-hero"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.8 }}
         style={{
           textAlign: 'center',
-          padding: '160px 20px',
           position: 'relative',
           backgroundImage: `url('https://static.showit.co/file/XMEb1lCbSG-ba5brtN5MxQ/205136/cliffwalk.gif')`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center -220%',
-          backgroundAttachment: 'fixed',
           borderBottom: '1px solid rgba(201, 160, 93, 0.2)'
         }}
       >

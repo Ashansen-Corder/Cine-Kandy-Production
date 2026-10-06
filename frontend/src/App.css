@@ -800,14 +800,15 @@ h1, h2, h3, h4, h5, h6 {
 
   .nav-links .nav-link {
     color: #ffffff !important;
-    font-size: 1.15rem !important;
+    font-size: 0.9rem !important;
     font-weight: 500;
-    letter-spacing: 2.5px;
-    padding: 1rem 1.5rem;
+    letter-spacing: 1.5px;
+    padding: 0.8rem 1.25rem;
     text-transform: uppercase;
     display: block;
     width: 100%;
     text-align: center;
+    white-space: nowrap;
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     transition: all 0.3s ease;
     border-radius: 6px;
@@ -854,6 +855,19 @@ h1, h2, h3, h4, h5, h6 {
 
   .section-subtitle {
     font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .nav-links {
+    padding-inline: 1rem;
+    gap: 0.45rem;
+  }
+
+  .nav-links .nav-link {
+    font-size: 0.8rem !important;
+    letter-spacing: 1px;
+    padding: 0.7rem 1rem;
   }
 }
 
@@ -1355,4 +1369,3 @@ h1, h2, h3, h4, h5, h6 {
   height: 60px;
   background: rgba(255, 215, 0, 0.1);
 }
-

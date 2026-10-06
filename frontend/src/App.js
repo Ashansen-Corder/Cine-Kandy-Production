@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, Instagram, Facebook, Mail, Play } from 'lucide-react';
 import './App.css';
 import asLogo from './assets/Artboard-1@4x.png';
+import homeBackgroundVideo from './assets/HB.mp4';
 // Components
 import Home from './pages/Home';
 import Gallery from './pages/Gallery';
@@ -129,6 +130,20 @@ function Footer() {
 }
 
 function App() {
+  useEffect(() => {
+    // Keep the hero asset warm in the browser cache while users visit other pages.
+    const preload = document.createElement('link');
+    preload.rel = 'preload';
+    preload.as = 'video';
+    preload.type = 'video/mp4';
+    preload.href = homeBackgroundVideo;
+    document.head.appendChild(preload);
+
+    return () => {
+      preload.remove();
+    };
+  }, []);
+
   return (
     <Router>
       <Preloader />

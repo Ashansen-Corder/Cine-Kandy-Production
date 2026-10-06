@@ -163,6 +163,21 @@
   color: #fff;
 }
 
+.gallery-hero {
+  min-height: 360px;
+  padding: 160px 20px;
+  background-size: cover;
+  background-position: center center;
+  background-attachment: scroll;
+}
+
+@media (max-width: 768px) {
+  .gallery-hero {
+    min-height: 300px;
+    padding: 120px 20px 100px;
+  }
+}
+
 /* Hero Title එකට ලස්සන shadow එකක් සහ style එකක් */
 .gallery-page h1 {
   font-family: 'Cormorant Garamond', serif !important;
