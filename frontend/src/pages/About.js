@@ -154,22 +154,22 @@ const About = () => {
           <p className="cta-subtitle">Connect with our team to discuss your vision</p>
           <div className="contact-grid">
             <motion.a 
-              href="mailto:info@cinekandy.com"
+              href="mailto:buddikasenanayaka68@gmail.com"
               className="contact-card"
               whileHover={{ y: -8 }}
             >
               <Mail className="contact-icon" />
               <h3>Email</h3>
-              <p>info@cinekandy.com</p>
+              <p>buddikasenanayaka68@gmail.com</p>
             </motion.a>
             <motion.a 
-              href="tel:0752026577"
+              href="tel:+94752934059"
               className="contact-card"
               whileHover={{ y: -8 }}
             >
               <Phone className="contact-icon" />
               <h3>Phone</h3>
-              <p>0752026577</p>
+              <p>0752934059</p>
             </motion.a>
             <motion.div 
               className="contact-card"

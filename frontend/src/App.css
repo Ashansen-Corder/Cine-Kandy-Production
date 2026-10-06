@@ -331,6 +331,29 @@ h1, h2, h3, h4, h5, h6 {
   position: relative;
 }
 
+.persistent-home-video {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  background: #400000;
+  z-index: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.persistent-home-video.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.persistent-home-video.hidden {
+  opacity: 0;
+  visibility: hidden;
+}
+
 /* Loader */
 .loader-container {
   position: fixed;

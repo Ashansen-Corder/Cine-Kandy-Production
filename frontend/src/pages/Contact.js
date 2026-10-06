@@ -4,7 +4,7 @@ import axios from 'axios';
 import { jsPDF } from 'jspdf';
 import './Contact.css';
 
-const TARGET_PHONE_NUMBER = '94752026577';
+const TARGET_PHONE_NUMBER = '94752934059';
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -140,7 +140,7 @@ const Contact = () => {
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(8);
     doc.setTextColor(100, 100, 100);
-    doc.text('Direct WhatsApp: 0752026577 | Sent via Cine Kandy Website', 105, 274, { align: 'center' });
+    doc.text('Direct WhatsApp: 0752934059 | Sent via Cine Kandy Website', 105, 274, { align: 'center' });
 
     const safeName = (data.name || 'Inquiry').replace(/[^a-zA-Z0-9]/g, '_');
     const filename = `CineKandy_Inquiry_${safeName}.pdf`;
@@ -198,7 +198,7 @@ Additional Info: ${currentData.additionalInfo}
         `
       }).catch(err => console.warn('Backend save notice:', err));
 
-      // 3. Open WhatsApp chat with target number 0752026577
+      // 3. Open WhatsApp chat with target number 0752934059
       openWhatsApp(currentData);
 
       setStatus('success');
@@ -390,7 +390,7 @@ Additional Info: ${currentData.additionalInfo}
                 <CheckCircle2 size={24} className="success-icon" />
                 <div>
                   <h4>Inquiry Sent Successfully!</h4>
-                  <p>Your inquiry PDF was generated & sent directly to <strong>0752026577</strong> via WhatsApp.</p>
+                  <p>Your inquiry PDF was generated & sent directly to <strong>0752934059</strong> via WhatsApp.</p>
                 </div>
               </div>
 
@@ -408,7 +408,7 @@ Additional Info: ${currentData.additionalInfo}
                     className="pdf-btn whatsapp-btn"
                     onClick={() => openWhatsApp(lastSubmittedData)}
                   >
-                    <MessageSquare size={16} /> Open WhatsApp (0752026577)
+                    <MessageSquare size={16} /> Open WhatsApp (0752934059)
                   </button>
                 </div>
               )}
@@ -417,7 +417,7 @@ Additional Info: ${currentData.additionalInfo}
 
           {status === 'error' && (
             <div className="error-msg">
-              Failed to process inquiry. Please try again or contact 0752026577 on WhatsApp directly.
+              Failed to process inquiry. Please try again or contact 0752934059 on WhatsApp directly.
             </div>
           )}
 

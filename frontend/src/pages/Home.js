@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
@@ -9,22 +9,9 @@ import professionalEquipmentImage from '../assets/professional-equipment.jpg';
 import experiencedTeamImage from '../assets/experienced-team.jpg';
 import artboard1Icon from '../assets/Artboard-1-alt@4x.png';
 import artboard2Icon from '../assets/Artboard-2@4x.png';
-import bgVideo from '../assets/HB.mp4';
 
 
 const Home = () => {
-  const [shouldLoadHeroVideo, setShouldLoadHeroVideo] = useState(true);
-
-  useEffect(() => {
-    const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-    const isSlowConnection = connection?.saveData ||
-      ['slow-2g', '2g'].includes(connection?.effectiveType);
-    const isLowMemoryDevice = navigator.deviceMemory && navigator.deviceMemory <= 2;
-
-    // Keep the poster-only experience for constrained mobile devices.
-    setShouldLoadHeroVideo(!isSlowConnection && !isLowMemoryDevice);
-  }, []);
-
   const features = [
     {
       icon: (
@@ -154,18 +141,6 @@ const Home = () => {
     <div className="home">
       {/* Hero Section */}
       <section className="hero hero-padded">
-        <video
-          autoPlay
-          muted
-          playsInline
-          loop
-          poster="/hero-poster.jpg"
-          preload={shouldLoadHeroVideo ? 'metadata' : 'none'}
-          className="hero-background-video"
-          aria-hidden="true"
-        >
-          {shouldLoadHeroVideo && <source src={bgVideo} type="video/mp4" />}
-        </video>
         <div className="hero-overlay"></div>
         <div className="hero-content">
           <h1 className="hero-title hero-title-spaced">

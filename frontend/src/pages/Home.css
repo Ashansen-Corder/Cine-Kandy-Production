@@ -60,7 +60,7 @@ html, body {
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  background: linear-gradient(180deg, #400000 0%, #7a0a0a 100%);
+  background: transparent;
   padding-top: 80px;
 }
 

@@ -19,6 +19,52 @@ import Dronography from './pages/Dronography';
 import { ScrollAnimationProvider, ScrollProgressBar } from './components/ScrollAnimations';
 import Preloader from './components/Preloader';
 
+function PersistentHomeVideo() {
+  const location = useLocation();
+  const videoRef = React.useRef(null);
+  const isHome = location.pathname === '/';
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return undefined;
+
+    if (isHome) {
+      const playVideo = () => {
+        video.play().catch(() => {
+          // Mobile browsers may defer autoplay until the first user gesture.
+        });
+      };
+
+      if (video.readyState >= HTMLMediaElement.HAVE_FUTURE_DATA) {
+        playVideo();
+      } else {
+        video.addEventListener('canplay', playVideo, { once: true });
+      }
+
+      return () => video.removeEventListener('canplay', playVideo);
+    }
+
+    video.pause();
+    return undefined;
+  }, [isHome]);
+
+  return (
+    <video
+      ref={videoRef}
+      autoPlay
+      muted
+      playsInline
+      loop
+      preload="auto"
+      poster="/hero-poster.jpg"
+      className={`persistent-home-video ${isHome ? 'visible' : 'hidden'}`}
+      aria-hidden="true"
+    >
+      <source src={homeBackgroundVideo} type="video/mp4" />
+    </video>
+  );
+}
+
 function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -112,10 +158,10 @@ function Footer() {
             <a href="https://www.instagram.com/cinekandy_production" target="_blank" rel="noopener noreferrer" className="footer-social-icon" title="Instagram">
               <Instagram size={24} />
             </a>
-            <a href="https://wa.me/94752026577" target="_blank" rel="noopener noreferrer" className="footer-social-icon" title="WhatsApp">
+            <a href="https://wa.me/94752934059" target="_blank" rel="noopener noreferrer" className="footer-social-icon" title="WhatsApp">
               <Play size={24} />
             </a>
-            <a href="mailto:contact@example.com" className="footer-social-icon" title="Email">
+            <a href="mailto:buddikasenanayaka68@gmail.com" className="footer-social-icon" title="Email">
               <Mail size={24} />
             </a>
           </div>
@@ -147,6 +193,7 @@ function App() {
   return (
     <Router>
       <Preloader />
+      <PersistentHomeVideo />
       <ScrollAnimationProvider>
         <div className="app">
           <ScrollProgressBar />
