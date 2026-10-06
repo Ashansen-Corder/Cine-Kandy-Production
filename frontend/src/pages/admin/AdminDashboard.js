@@ -24,7 +24,9 @@ const AdminDashboard = () => {
     category: 'Weddings',
     type: 'Image',
     image: '',
-    vimeoUrl: ''
+    vimeoUrl: '',
+    videoUrl: '',
+    poster: ''
   });
 
   const [eventForm, setEventForm] = useState({
@@ -99,7 +101,9 @@ const AdminDashboard = () => {
       category: item.category,
       type: item.type,
       image: item.image || '',
-      vimeoUrl: item.vimeoUrl || ''
+      vimeoUrl: item.vimeoUrl || '',
+      videoUrl: item.videoUrl || '',
+      poster: item.poster || ''
     });
     setShowModal(true);
   };
@@ -114,7 +118,9 @@ const AdminDashboard = () => {
       category: 'Weddings',
       type: 'Image',
       image: '',
-      vimeoUrl: ''
+      vimeoUrl: '',
+      videoUrl: '',
+      poster: ''
     });
   };
 
@@ -185,8 +191,8 @@ const AdminDashboard = () => {
       return;
     }
 
-    if (modalType === 'video' && !galleryForm.vimeoUrl) {
-      alert('Please provide a Vimeo URL');
+    if (modalType === 'video' && !galleryForm.vimeoUrl && !galleryForm.videoUrl) {
+      alert('Please provide a Vimeo URL or direct video URL');
       return;
     }
 
@@ -204,6 +210,8 @@ const AdminDashboard = () => {
         payload.image = galleryForm.image;
       } else {
         payload.vimeoUrl = galleryForm.vimeoUrl;
+        payload.videoUrl = galleryForm.videoUrl;
+        payload.poster = galleryForm.poster;
       }
 
       if (editingId) {
@@ -406,14 +414,29 @@ const AdminDashboard = () => {
                       </div>
                     ) : (
                       <div className="form-group-gallery">
-                        <label htmlFor="vimeoUrl">Vimeo URL *</label>
+                        <label htmlFor="vimeoUrl">Vimeo URL</label>
                         <input
                           id="vimeoUrl"
                           type="url"
                           placeholder="https://vimeo.com/123456789"
                           value={galleryForm.vimeoUrl}
                           onChange={(e) => setGalleryForm({...galleryForm, vimeoUrl: e.target.value})}
-                          required
+                        />
+                        <label htmlFor="videoUrl">Direct MP4/WebM URL</label>
+                        <input
+                          id="videoUrl"
+                          type="url"
+                          placeholder="https://cdn.example.com/video.mp4"
+                          value={galleryForm.videoUrl}
+                          onChange={(e) => setGalleryForm({...galleryForm, videoUrl: e.target.value})}
+                        />
+                        <label htmlFor="posterUrl">Poster / thumbnail URL</label>
+                        <input
+                          id="posterUrl"
+                          type="url"
+                          placeholder="https://cdn.example.com/video-poster.jpg"
+                          value={galleryForm.poster}
+                          onChange={(e) => setGalleryForm({...galleryForm, poster: e.target.value})}
                         />
                       </div>
                     )}

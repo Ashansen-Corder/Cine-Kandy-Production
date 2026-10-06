@@ -79,11 +79,12 @@ router.get('/:id', async (req, res) => {
  * - type: 'Image' | 'Video'
  * 
  * For Image: { image: "path/to/image.jpg" }
- * For Video: { vimeoUrl: "https://vimeo.com/123456" }
+ * For Video: { vimeoUrl: "https://vimeo.com/123456", poster: "https://..." }
+ * or { videoUrl: "https://cdn.example.com/video.mp4", poster: "https://..." }
  */
 router.post('/', async (req, res) => {
   try {
-    const { title, description, category, type, image, vimeoUrl, featured } = req.body;
+    const { title, description, category, type, image, vimeoUrl, videoUrl, poster, featured } = req.body;
 
     // Validation
     if (!title || !category || !type) {
@@ -101,10 +102,10 @@ router.post('/', async (req, res) => {
       });
     }
 
-    if (type === 'Video' && !vimeoUrl) {
+    if (type === 'Video' && !vimeoUrl && !videoUrl) {
       return res.status(400).json({
         success: false,
-        error: 'Vimeo URL is required for Video type'
+        error: 'A Vimeo URL or direct video URL is required for Video type'
       });
     }
 
@@ -121,17 +122,22 @@ router.post('/', async (req, res) => {
     if (type === 'Image') {
       galleryData.image = image;
     } else if (type === 'Video') {
-      galleryData.vimeoUrl = vimeoUrl;
-      const vimeoId = extractVimeoId(vimeoUrl);
-      
-      if (!vimeoId) {
-        return res.status(400).json({
-          success: false,
-          error: 'Invalid Vimeo URL. Expected format: https://vimeo.com/123456'
-        });
+      galleryData.poster = poster || '';
+      if (vimeoUrl) {
+        galleryData.vimeoUrl = vimeoUrl;
+        const vimeoId = extractVimeoId(vimeoUrl);
+
+        if (!vimeoId) {
+          return res.status(400).json({
+            success: false,
+            error: 'Invalid Vimeo URL. Expected format: https://vimeo.com/123456'
+          });
+        }
+
+        galleryData.vimeoId = vimeoId;
+      } else {
+        galleryData.videoUrl = videoUrl;
       }
-      
-      galleryData.vimeoId = vimeoId;
     }
 
     // Create and save
@@ -158,7 +164,7 @@ router.post('/', async (req, res) => {
  */
 router.put('/:id', async (req, res) => {
   try {
-    const { title, description, category, type, image, vimeoUrl, featured } = req.body;
+    const { title, description, category, type, image, vimeoUrl, videoUrl, poster, featured } = req.body;
 
     // Build update object
     const updateData = {};
@@ -189,6 +195,14 @@ router.put('/:id', async (req, res) => {
       
       updateData.vimeoId = vimeoId;
       updateData.image = undefined;
+      updateData.videoUrl = undefined;
+      updateData.poster = poster || '';
+    } else if (type === 'Video' && videoUrl) {
+      updateData.videoUrl = videoUrl;
+      updateData.vimeoUrl = undefined;
+      updateData.vimeoId = undefined;
+      updateData.image = undefined;
+      updateData.poster = poster || '';
     }
 
     updateData.updatedAt = Date.now();

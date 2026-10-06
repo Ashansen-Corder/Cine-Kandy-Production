@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
 import { Play, X } from 'lucide-react';
@@ -12,6 +12,7 @@ const FALLBACK_GALLERY_ITEMS = [
     subtitle: 'An Intimate Celebration',
     vimeoUrl: 'https://vimeo.com/1179892828',
     vimeoId: '1179892828',
+    poster: 'https://vumbnail.com/1179892828.jpg',
     type: 'Video',
   },
   {
@@ -20,6 +21,7 @@ const FALLBACK_GALLERY_ITEMS = [
     subtitle: 'Mountain Elopement',
     vimeoUrl: 'https://vimeo.com/1179885305',
     vimeoId: '1179885305',
+    poster: 'https://vumbnail.com/1179885305.jpg',
     type: 'Video',
   },
   {
@@ -28,6 +30,7 @@ const FALLBACK_GALLERY_ITEMS = [
     subtitle: 'Desert Romance',
     vimeoUrl: 'https://vimeo.com/1179882525',
     vimeoId: '1179882525',
+    poster: 'https://vumbnail.com/1179882525.jpg',
     type: 'Video',
   },
   {
@@ -36,6 +39,7 @@ const FALLBACK_GALLERY_ITEMS = [
     subtitle: 'Tropical Paradise',
     vimeoUrl: 'https://vimeo.com/1179885805',
     vimeoId: '1179885805',
+    poster: 'https://vumbnail.com/1179885805.jpg',
     type: 'Video',
   },
   {
@@ -44,6 +48,7 @@ const FALLBACK_GALLERY_ITEMS = [
     subtitle: 'Garden Elegance',
     vimeoUrl: 'https://vimeo.com/1179888247',
     vimeoId: '1179888247',
+    poster: 'https://vumbnail.com/1179888247.jpg',
     type: 'Video',
   },
   {
@@ -52,12 +57,13 @@ const FALLBACK_GALLERY_ITEMS = [
     subtitle: 'Beachside Bliss',
     vimeoUrl: 'https://vimeo.com/1179890087',
     vimeoId: '1179890087',
+    poster: 'https://vumbnail.com/1179890087.jpg',
     type: 'Video',
   },
 ];
 
 const getVimeoEmbedUrl = (item, isBackground = false) => {
-  const url = item.vimeoUrl || item.videoUrl || item.url || '';
+  const url = item.vimeoUrl || item.url || '';
   let videoId = item.vimeoId || null;
   let hashParam = item.hash || item.h || '';
 
@@ -103,6 +109,28 @@ const getVimeoEmbedUrl = (item, isBackground = false) => {
   }
 
   return `https://player.vimeo.com/video/${videoId}?${params.join('&')}`;
+};
+
+const getDirectVideoUrl = (item) => {
+  const url = item.videoUrl || '';
+  return /\.(mp4|webm|ogg)(?:$|[?#])/i.test(url) ? url : null;
+};
+
+const getDirectVideoType = (url) => {
+  const extension = url.match(/\.([a-z0-9]+)(?:$|[?#])/i)?.[1].toLowerCase();
+  return extension === 'webm' ? 'video/webm' : extension === 'ogg' ? 'video/ogg' : 'video/mp4';
+};
+
+const getPosterUrl = (item) => {
+  if (item.poster || item.posterUrl) return item.poster || item.posterUrl;
+
+  const vimeoId = item.vimeoId;
+  if (vimeoId) return `https://vumbnail.com/${vimeoId}.jpg`;
+
+  const youtubeId = item.youtubeId;
+  if (youtubeId) return `https://i.ytimg.com/vi/${youtubeId}/hqdefault.jpg`;
+
+  return null;
 };
 
 const getYouTubeEmbedUrl = (item, isBackground = false) => {
@@ -210,6 +238,8 @@ const Gallery = () => {
   );
 
   const GalleryCard = ({ item, index }) => {
+    const cardRef = useRef(null);
+    const [isNearViewport, setIsNearViewport] = useState(false);
     const isLeft = index % 2 === 0;
     const cardVariants = {
       hidden: { opacity: 0, x: isLeft ? -50 : 50 },
@@ -218,6 +248,29 @@ const Gallery = () => {
 
     const vimeoEmbedUrl = getVimeoEmbedUrl(item, true);
     const youtubeEmbedUrl = getYouTubeEmbedUrl(item, true);
+    const directVideoUrl = getDirectVideoUrl(item);
+    const posterUrl = getPosterUrl(item);
+    const hasPlayableSource = Boolean(directVideoUrl || vimeoEmbedUrl || youtubeEmbedUrl);
+
+    useEffect(() => {
+      if (!cardRef.current || typeof IntersectionObserver === 'undefined') {
+        setIsNearViewport(true);
+        return undefined;
+      }
+
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            setIsNearViewport(true);
+            observer.disconnect();
+          }
+        },
+        { rootMargin: '300px 0px' }
+      );
+
+      observer.observe(cardRef.current);
+      return () => observer.disconnect();
+    }, []);
 
     return (
       <motion.div
@@ -234,6 +287,7 @@ const Gallery = () => {
         }}
       >
         <motion.div
+          ref={cardRef}
           className="gallery-card"
           onClick={() => setSelectedItem(item)}
           whileHover={{ y: -10, boxShadow: '0 20px 40px rgba(201, 160, 93, 0.3)' }}
@@ -248,29 +302,48 @@ const Gallery = () => {
           }}
         >
           <div style={{ position: 'relative', width: '100%', paddingTop: '56.25%', backgroundColor: '#000', overflow: 'hidden' }}>
-            {vimeoEmbedUrl ? (
-              <iframe
-                src={vimeoEmbedUrl}
-                frameBorder="0"
-                allow="autoplay; fullscreen; picture-in-picture"
-                allowFullScreen
-                style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 'none', pointerEvents: 'none' }}
-                title={item.title || 'Vimeo Video'}
+            {directVideoUrl && isNearViewport ? (
+              <video
+                controls
+                preload="metadata"
+                poster={posterUrl || undefined}
+                playsInline
+                style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }}
+                title={item.title || 'Gallery Video'}
+                onClick={(event) => event.stopPropagation()}
+              >
+                <source src={directVideoUrl} type={getDirectVideoType(directVideoUrl)} />
+              </video>
+            ) : posterUrl ? (
+              <img
+                src={isNearViewport ? posterUrl : undefined}
+                alt={item.title || 'Gallery preview'}
+                loading="lazy"
+                decoding="async"
+                style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }}
               />
-            ) : youtubeEmbedUrl ? (
-              <iframe
-                src={youtubeEmbedUrl}
-                frameBorder="0"
-                allow="autoplay; encrypted-media; picture-in-picture"
-                allowFullScreen
-                style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 'none', pointerEvents: 'none' }}
-                title={item.title || 'YouTube Video'}
-              />
-            ) : (
+            ) : null}
+
+            {!posterUrl && !hasPlayableSource ? (
               <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#0a0a0a' }}>
                 <Play size={48} color="#C9A05D" />
               </div>
-            )}
+            ) : null}
+
+            {hasPlayableSource && !directVideoUrl ? (
+              <div style={{
+                position: 'absolute',
+                inset: 0,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                background: 'rgba(0, 0, 0, 0.2)',
+                zIndex: 2,
+                pointerEvents: 'none'
+              }}>
+                <Play size={48} color="#fff" fill="#fff" />
+              </div>
+            ) : null}
 
             <div style={{
               position: 'absolute',
@@ -302,6 +375,8 @@ const Gallery = () => {
   const Lightbox = ({ item, onClose }) => {
     const vimeoEmbedUrl = getVimeoEmbedUrl(item, false);
     const youtubeEmbedUrl = getYouTubeEmbedUrl(item, false);
+    const directVideoUrl = getDirectVideoUrl(item);
+    const posterUrl = getPosterUrl(item);
 
     return (
       <motion.div
@@ -338,7 +413,19 @@ const Gallery = () => {
             border: '1px solid rgba(201, 160, 93, 0.4)'
           }}
         >
-          {vimeoEmbedUrl ? (
+          {directVideoUrl ? (
+            <video
+              controls
+              autoPlay
+              preload="metadata"
+              poster={posterUrl || undefined}
+              playsInline
+              style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+              title={item.title || 'Gallery Video'}
+            >
+              <source src={directVideoUrl} type="video/mp4" />
+            </video>
+          ) : vimeoEmbedUrl ? (
             <iframe
               src={vimeoEmbedUrl}
               frameBorder="0"

@@ -36,8 +36,20 @@ const gallerySchema = new mongoose.Schema(
     vimeoUrl: {
       type: String,
       required: function() {
-        return this.type === 'Video';
+        return this.type === 'Video' && !this.videoUrl;
       }
+    },
+    // Optional self-hosted MP4/WebM/OGG source. Prefer H.264 MP4 for broad browser support.
+    videoUrl: {
+      type: String,
+      required: function() {
+        return this.type === 'Video' && !this.vimeoUrl;
+      }
+    },
+    // Lightweight preview image shown before a video source is loaded.
+    poster: {
+      type: String,
+      trim: true
     },
     // Extracted Vimeo video ID for embed purposes
     vimeoId: {
