@@ -31,6 +31,10 @@ function PersistentHomeVideo() {
     if (isHome) {
       video.muted = true;
       video.defaultMuted = true;
+      // Keep the muted state explicit for mobile browsers that inspect the
+      // media element attributes before allowing autoplay.
+      video.setAttribute('muted', '');
+      video.setAttribute('playsinline', '');
 
       const playVideo = () => {
         video.play().catch(() => {

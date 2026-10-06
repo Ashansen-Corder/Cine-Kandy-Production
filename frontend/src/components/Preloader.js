@@ -3,11 +3,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 import './Preloader.css';
 
 const PRELOADER_DURATION = 1500;
+const PRELOADER_STORAGE_KEY = 'cinekandy-intro-played';
 
 const Preloader = () => {
   const [isLoading, setIsLoading] = useState(() => {
     try {
-      return sessionStorage.getItem('cinekandy-intro-played') !== 'true';
+      return sessionStorage.getItem(PRELOADER_STORAGE_KEY) !== 'true';
     } catch {
       return true;
     }
@@ -17,7 +18,7 @@ const Preloader = () => {
     if (!isLoading) return undefined;
 
     try {
-      sessionStorage.setItem('cinekandy-intro-played', 'true');
+      sessionStorage.setItem(PRELOADER_STORAGE_KEY, 'true');
     } catch {
       // Session storage can be unavailable in private browsing.
     }
