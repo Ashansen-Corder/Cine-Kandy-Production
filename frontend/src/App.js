@@ -29,9 +29,12 @@ function PersistentHomeVideo() {
     if (!video) return undefined;
 
     if (isHome) {
+      video.muted = true;
+      video.defaultMuted = true;
+
       const playVideo = () => {
         video.play().catch(() => {
-          // Mobile browsers may defer autoplay until the first user gesture.
+          // Browsers can still defer playback in restricted environments.
         });
       };
 
