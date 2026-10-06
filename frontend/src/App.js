@@ -85,11 +85,13 @@ function Navigation() {
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
-    } else {
+    } else if (!document.body.classList.contains('intro-playing')) {
       document.body.style.overflow = 'unset';
     }
     return () => {
-      document.body.style.overflow = 'unset';
+      if (!document.body.classList.contains('intro-playing')) {
+        document.body.style.overflow = 'unset';
+      }
     };
   }, [isOpen]);
 

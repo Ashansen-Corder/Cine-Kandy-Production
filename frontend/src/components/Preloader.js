@@ -12,6 +12,7 @@ const Preloader = ({ theme }) => {
     }
   });
   const videoRef = useRef(null);
+  const hasCompletedRef = useRef(false);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -19,6 +20,8 @@ const Preloader = ({ theme }) => {
     let fallbackTimer;
 
     const handleVideoEnd = () => {
+      if (hasCompletedRef.current) return;
+      hasCompletedRef.current = true;
       clearTimeout(fallbackTimer);
       try {
         sessionStorage.setItem('cinekandy-intro-played', 'true');
@@ -30,22 +33,29 @@ const Preloader = ({ theme }) => {
 
     if (!video || !isLoading) return undefined;
 
+    hasCompletedRef.current = false;
     video.addEventListener('ended', handleVideoEnd);
 
     const handleMetadata = () => {
       if (Number.isFinite(video.duration) && video.duration > 0) {
+        clearTimeout(fallbackTimer);
         fallbackTimer = setTimeout(handleVideoEnd, (video.duration + 1) * 1000);
       }
     };
     const handlePlaybackError = () => {
-      fallbackTimer = setTimeout(handleVideoEnd, 5000);
+      clearTimeout(fallbackTimer);
+      fallbackTimer = setTimeout(handleVideoEnd, 1500);
     };
 
     video.addEventListener('loadedmetadata', handleMetadata);
     video.addEventListener('error', handlePlaybackError, { once: true });
-    fallbackTimer = setTimeout(handleVideoEnd, 12000);
+    // Always complete even when mobile Safari/Chrome delays media events.
+    fallbackTimer = setTimeout(handleVideoEnd, 10000);
     video.play().catch(() => {
-      // Keep the overlay visible if the browser delays muted autoplay.
+      // The poster remains visible while autoplay is blocked, then the
+      // guaranteed fallback lets the page become interactive.
+      clearTimeout(fallbackTimer);
+      fallbackTimer = setTimeout(handleVideoEnd, 1500);
     });
     document.body.classList.add('intro-playing');
 
@@ -78,6 +88,7 @@ const Preloader = ({ theme }) => {
             autoPlay
             muted
             playsInline
+            preload="auto"
             disablePictureInPicture
             aria-label="Cine Kandy"
           />

@@ -356,7 +356,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 body.intro-playing {
-  overflow: hidden;
+  overflow: hidden !important;
   touch-action: none;
   overscroll-behavior: none;
 }
