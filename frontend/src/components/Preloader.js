@@ -4,33 +4,60 @@ import logoVideo from '../assets/Logo Animation.mp4';
 import './Preloader.css';
 
 const Preloader = ({ theme }) => {
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(() => {
+    try {
+      return sessionStorage.getItem('cinekandy-intro-played') !== 'true';
+    } catch {
+      return true;
+    }
+  });
   const videoRef = useRef(null);
 
   useEffect(() => {
     const video = videoRef.current;
     let exitTimer;
+    let fallbackTimer;
 
     const handleVideoEnd = () => {
+      clearTimeout(fallbackTimer);
+      try {
+        sessionStorage.setItem('cinekandy-intro-played', 'true');
+      } catch {
+        // Session storage can be unavailable in private browsing.
+      }
       exitTimer = setTimeout(() => setIsLoading(false), 300);
     };
 
-    if (!video) return undefined;
+    if (!video || !isLoading) return undefined;
 
     video.addEventListener('ended', handleVideoEnd);
 
-    // iOS Safari can reject autoplay until the video has been interacted with.
-    // The timeout guarantees the app is never blocked behind the intro.
-    const fallbackTimer = setTimeout(() => setIsLoading(false), 4500);
-    const playPromise = video.play();
-    playPromise?.catch(() => setIsLoading(false));
+    const handleMetadata = () => {
+      if (Number.isFinite(video.duration) && video.duration > 0) {
+        fallbackTimer = setTimeout(handleVideoEnd, (video.duration + 1) * 1000);
+      }
+    };
+    const handlePlaybackError = () => {
+      fallbackTimer = setTimeout(handleVideoEnd, 5000);
+    };
+
+    video.addEventListener('loadedmetadata', handleMetadata);
+    video.addEventListener('error', handlePlaybackError, { once: true });
+    fallbackTimer = setTimeout(handleVideoEnd, 12000);
+    video.play().catch(() => {
+      // Keep the overlay visible if the browser delays muted autoplay.
+    });
+    document.body.classList.add('intro-playing');
 
     return () => {
       clearTimeout(fallbackTimer);
       clearTimeout(exitTimer);
       video.removeEventListener('ended', handleVideoEnd);
+      video.removeEventListener('loadedmetadata', handleMetadata);
+      video.removeEventListener('error', handlePlaybackError);
+      document.body.classList.remove('intro-playing');
     };
-  }, []);
+  }, [isLoading]);
 
   return (
     <AnimatePresence mode="wait">

@@ -4,7 +4,7 @@ body {
 
 /* Ensure main containers also have white background */
 #root, .App, main {
-  background-color: #fff;
+  background-color: transparent;
 }
 
 /* Video Wrapper and Background Video Styling */
@@ -329,6 +329,7 @@ h1, h2, h3, h4, h5, h6 {
 .app {
   min-height: 100vh;
   position: relative;
+  z-index: 1;
 }
 
 .persistent-home-video {
@@ -352,6 +353,12 @@ h1, h2, h3, h4, h5, h6 {
 .persistent-home-video.hidden {
   opacity: 0;
   visibility: hidden;
+}
+
+body.intro-playing {
+  overflow: hidden;
+  touch-action: none;
+  overscroll-behavior: none;
 }
 
 /* Loader */
