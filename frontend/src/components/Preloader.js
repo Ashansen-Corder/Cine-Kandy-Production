@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import logoVideo from '../assets/Logo Animation.mp4';
 import './Preloader.css';
 
-const PRELOADER_DURATION = 1800;
+const PRELOADER_DURATION = 5000;
 
 const Preloader = () => {
   const [isLoading, setIsLoading] = useState(true);
