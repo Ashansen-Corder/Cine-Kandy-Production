@@ -10,6 +10,11 @@ const Preloader = () => {
   const [videoFailed, setVideoFailed] = useState(false);
 
   useEffect(() => {
+    if (!isLoading) {
+      document.body.classList.remove('intro-playing');
+      return undefined;
+    }
+
     document.body.classList.add('intro-playing');
     const exitTimer = setTimeout(() => setIsLoading(false), PRELOADER_DURATION);
 
@@ -17,7 +22,7 @@ const Preloader = () => {
       clearTimeout(exitTimer);
       document.body.classList.remove('intro-playing');
     };
-  }, []);
+  }, [isLoading]);
 
   return (
     <AnimatePresence mode="wait">
